@@ -19,7 +19,7 @@
                         <div class="mb-6">
                             <x-application-logo />
                         </div>
-                        <h4>
+                        <h4  class="text-slate-800 dark:text-slate-400 font-bold">
                             {{ __('Unlock your project') }}
                             <span class="text-slate-800 dark:text-slate-400 font-bold">
                                 {{ __('Performance') }}
