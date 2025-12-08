@@ -37,13 +37,13 @@
                         <a href="{{ route('dashboards.ecommerce') }}" class="navItem {{ (\Request::route()->getName() == 'dashboards.ecommerce') ? 'active' : '' }}">{{ __('Ecommerce Dashboard') }}
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('dashboards.banking') }}"
-                        class="navItem {{ (\Request::route()->getName() == 'dashboards.banking') ? 'active' : '' }}">
-                            {{ __('Banking Dashboard') }}
+
+                     <li>
+                        <a href="{{ route('events.list') }}"
+                        class="navItem {{ (\Request::route()->getName() == 'events.list') ? 'active' : '' }}">
+                            {{ __('Events Manager') }}
                         </a>
                     </li>
-
                     <li>
                         <a href="{{ route('dashboards.crm') }}"
                         class="navItem {{ (\Request::route()->getName() == 'dashboards.crm') ? 'active' : '' }}">
@@ -86,14 +86,14 @@
                     </span>
                 </a>
             </li>
-            <li>
+            {{-- <li>
                 <a href="{{ route('calender') }}" class="navItem {{ (\Request::route()->getName() == 'calender') ? 'active' : '' }}">
                     <span class="flex items-center">
                         <iconify-icon class=" nav-icon" icon="heroicons-outline:calendar"></iconify-icon>
                         <span>{{ __('Calander') }}</span>
                     </span>
                 </a>
-            </li>
+            </li> --}}
             <li>
                 <a href="{{ route('todo') }}" class="navItem {{ (\Request::route()->getName() == 'todo') ? 'active' : '' }}">
                     <span class="flex items-center">

@@ -76,8 +76,8 @@ class AppsController extends Controller
                 'active' => true
             ],
         ];
-        return view('apps.calender', [
-            'pageTitle' => 'Calender ',
+        return view('dashboards.calender', [
+            'pageTitle' => 'Calender Management ',
             'breadcrumbItems' => $breadcrumbsItems,
         ]);
     }

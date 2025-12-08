@@ -14,9 +14,10 @@ class Kernel extends ConsoleKernel
      * @return void
      */
     protected function schedule(Schedule $schedule)
-    {
-        // $schedule->command('inspire')->hourly();
-    }
+{
+    // $schedule->command('events:update-missed')->everyMinute();
+    // $schedule->command('events:send-reminders')->everyMinute();
+}
 
     /**
      * Register the commands for the application.

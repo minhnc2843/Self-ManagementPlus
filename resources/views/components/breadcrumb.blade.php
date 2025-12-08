@@ -1,7 +1,7 @@
 @props(['breadcrumbItems' => [], 'pageTitle'=>'Default Title'])
 <div class="flex items-center justify-between">
     {{--Breadcrumb title start--}}
-    <h5 class="text-textColor font-Inter font-medium md:text-2xl mr-4 dark:text-white mb-1 sm:mb-0">
+    <h5 class="text-primary-500 font-Inter font-medium md:text-2xl mr-4 dark:text-white mb-1 sm:mb-0">
         {{ __($pageTitle) }}
     </h5>
 
@@ -18,7 +18,12 @@
         @endempty
 
         @foreach($breadcrumbItems as $breadcrumbItem)
-            @if($breadcrumbItem['active'])
+            {{-- SỬA LỖI: KIỂM TRA KHÓA 'active' CÓ TỒN TẠI KHÔNG --}}
+            @php
+                $isActive = isset($breadcrumbItem['active']) ? $breadcrumbItem['active'] : false;
+            @endphp
+            
+            @if($isActive)
                 {{--Active--}}
                 <li class="inline-block">
                     <a href="{{ $breadcrumbItem['url'] }}" class="breadcrumbList breadcrumbActive dark:text-slate-300">

@@ -72,3 +72,15 @@ import validate from "jquery-validation";
 window.validate = validate;
 
 import.meta.glob(["../images/**"]);
+window.Echo.private('private-user-' + window.Laravel.userId)
+    .notification((data) => {
+
+        console.log("Nhận reminder realtime:", data);
+
+        // popup realtime
+        Swal.fire({
+            title: "Nhắc lịch",
+            text: data.title + " - lúc " + data.start_time,
+            icon: data.is_important ? "warning" : "info",
+        });
+    });

@@ -16,7 +16,8 @@ use App\Http\Controllers\ComponentsController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\GeneralSettingController;
-
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\NotificationController;
 require __DIR__ . '/auth.php';
 
 Route::get('/', function () {
@@ -27,10 +28,21 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     // Dashboards
     Route::get('dashboard-analytic', [HomeController::class, 'analyticDashboard'])->name('dashboards.analytic');
     Route::get('dashboard-ecommerce', [HomeController::class, 'ecommerceDashboard'])->name('dashboards.ecommerce');
-    Route::get('/banking-dashboard', function () {
-    return view('dashboards.banking-dashboard');
-    })->name('dashboards.banking');
-
+    // Route::get('/banking-dashboard', function () {
+    // return view('dashboards.banking-dashboard');
+    // })->name('dashboards.banking');
+    // Route::get('calender', [AppsController::class, 'calender'])->name('calender');
+// Trong routes/web.php hoặc routes/api.php (tùy thuộc vào nơi bạn đặt)
+Route::prefix('events')->group(function () {
+    Route::get('/json', [EventController::class, 'index'])->name('events.json');
+    Route::get('/', [EventController::class, 'showList'])->name('events.list');
+    Route::get('/create', [EventController::class, 'create'])->name('events.create');
+    Route::post('/', [EventController::class, 'store'])->name('events.store');
+    Route::get('/{id}/edit', [EventController::class, 'edit'])->name('events.edit');
+    Route::put('/{id}', [EventController::class, 'update'])->name('events.update');
+    Route::post('/{id}/status', [EventController::class, 'updateStatus'])->name('events.status');
+});
+    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
     Route::get('/crm-dashboard', function () {
         return view('dashboards.crm-dashboard');
     })->name('dashboards.crm');
@@ -58,7 +70,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('chat', [AppsController::class, 'chat'])->name('chat');
     Route::get('email', [AppsController::class, 'email'])->name('email');
     Route::get('kanban', [AppsController::class, 'kanban'])->name('kanban');
-    Route::get('calender', [AppsController::class, 'calender'])->name('calender');
+   
     Route::get('todo', [AppsController::class, 'todo'])->name('todo');
     Route::get('project', [AppsController::class, 'projects'])->name('project');
     Route::get('project-details', [AppsController::class, 'projectDetails'])->name('project-details');
