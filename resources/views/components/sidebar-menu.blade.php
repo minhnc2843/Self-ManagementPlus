@@ -33,10 +33,10 @@
                     <li>
                         <a href="{{ route('dashboards.analytic') }}" class="navItem {{ (\Request::route()->getName() == 'dashboards.analytic') ? 'active' : '' }}">{{ __('Analytical Dashboard') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('dashboards.ecommerce') }}" class="navItem {{ (\Request::route()->getName() == 'dashboards.ecommerce') ? 'active' : '' }}">{{ __('Ecommerce Dashboard') }}
+                    {{-- <li>
+                        <a href="{{ route('list.finanece') }}" class="navItem {{ (\Request::route()->getName() == 'list.finanece') ? 'active' : '' }}">{{ __('Finance Analytical') }}
                         </a>
-                    </li>
+                    </li> --}}
 
                      <li>
                         <a href="{{ route('events.list') }}"
@@ -70,14 +70,7 @@
                     </span>
                 </a>
             </li>
-            <li class="">
-                <a href="{{ route('email') }}" class="navItem {{ (\Request::route()->getName() == 'email') ? 'active' : '' }}">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:mail"></iconify-icon>
-                        <span>{{ __('Email') }}</span>
-                    </span>
-                </a>
-            </li>
+            
             <li>
                 <a href="{{ route('kanban') }}" class="navItem {{ (\Request::route()->getName() == 'kanban') ? 'active' : '' }}">
                     <span class="flex items-center">
@@ -86,14 +79,7 @@
                     </span>
                 </a>
             </li>
-            {{-- <li>
-                <a href="{{ route('calender') }}" class="navItem {{ (\Request::route()->getName() == 'calender') ? 'active' : '' }}">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:calendar"></iconify-icon>
-                        <span>{{ __('Calander') }}</span>
-                    </span>
-                </a>
-            </li> --}}
+         
             <li>
                 <a href="{{ route('todo') }}" class="navItem {{ (\Request::route()->getName() == 'todo') ? 'active' : '' }}">
                     <span class="flex items-center">
@@ -140,21 +126,12 @@
                     <li>
                         <a href="{{ route('utility.blog') }}" class="{{ (\Request::route()->getName() == 'utility.blog') ? 'active' : '' }}">{{ __('Blog') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('utility.blank') }}" class="{{ (\Request::route()->getName() == 'utility.blank') ? 'active' : '' }}">{{ __('Blank Page') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('utility.profile') }}" class="{{ (\Request::route()->getName() == 'utility.profile') ? 'active' : '' }}">{{ __('Profile') }}</a>
-                    </li>
+                
                     <li>
                         <a href="{{ route('utility.404') }}" class="{{ (\Request::route()->getName() == 'utility.404') ? 'active' : '' }}">{{ __('404 Pages') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('utility.coming-soon') }}" class="{{ (\Request::route()->getName() == 'utility.coming-soon') ? 'active' : '' }}">{{ __('Coming Soon') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('utility.under-maintenance') }}" class="{{ (\Request::route()->getName() == 'utility-under-maintenance') ? 'active' : '' }}">{{ __('Under Maintenance') }}</a>
-                    </li>
+                    
+                   
                 </ul>
             </li>
             <!-- Elements Area -->
@@ -292,23 +269,7 @@
                 </ul>
             </li>
             <!-- Tables -->
-            <li class="{{ (\Request::route()->getName() == 'table*') ? 'active' : '' }}">
-                <a href="javascript:void(0)" class="navItem">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:table"></iconify-icon>
-                        <span>{{ __('Tables') }}</span>
-                    </span>
-                    <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
-                </a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('table.basic') }}" class="{{ (\Request::route()->getName() == 'table.basic') ? 'active' : '' }}">{{ __('Basic Tables') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('table.advance') }}" class="{{ (\Request::route()->getName() == 'table.advance') ? 'active' : '' }}">{{ __('Advanced Table') }}</a>
-                    </li>
-                </ul>
-            </li>
+            
             <!-- Charts -->
             <li class="{{ (\Request::route()->getName() == 'chart*') ? 'active' : '' }}">
                 <a href="javascript:void(0)" class="navItem">
@@ -328,23 +289,9 @@
                 </ul>
             </li>
             <!-- Map -->
-            <li>
-                <a href="{{ route('map') }}" class="navItem {{ (\Request::route()->getName() == 'map') ? 'active' : '' }}">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:map"></iconify-icon>
-                        <span>{{ __('Map') }}</span>
-                    </span>
-                </a>
-            </li>
+            
             <!-- Icons -->
-            <li>
-                <a href="{{ route('icon') }}" class="navItem {{ (\Request::route()->getName() == 'icon') ? 'active' : '' }}">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:emoji-happy"></iconify-icon>
-                        <span>{{ __('Icons') }}</span>
-                    </span>
-                </a>
-            </li>
+            
             <!-- Database -->
             <li>
                 <a href="{{ route('database-backups.index') }}"
@@ -369,12 +316,6 @@
         <!-- Upgrade Your Business Plan Card Start -->
         <div class="bg-slate-900 mb-10 mt-24 p-4 relative text-center rounded-2xl text-white" id="sidebar_bottom_wizard">
             <img src="/images/svg/rabit.svg" alt="" class="mx-auto relative -mt-[73px]">
-            {{-- <div class="max-w-[160px] mx-auto mt-6">
-                <div class="widget-title font-Inter mb-1">Unlimited Access</div>
-                <div class="text-xs font-light font-Inter">
-                    Upgrade your system to business plan
-                </div>
-            </div> --}}
             <div class="mt-6">
                 <button class="bg-white hover:bg-opacity-80 text-slate-900 text-sm font-Inter rounded-md w-full block py-2 font-medium">
                     Đăng Xuất

@@ -29,22 +29,7 @@ class AppsController extends Controller
     /**
      * Display a email view
      */
-    public function email()
-    {
-        $breadcrumbsItems = [
-            [
-                'name' => 'Email',
-                'url' => '/email',
-                'active' => true
-            ],
-
-        ];
-        return view('apps.email', [
-            'pageTitle' => 'Email',
-            'breadcrumbItems' => $breadcrumbsItems,
-        ]);
-    }
-
+  
     /**
      * Display a kanban view
      */
