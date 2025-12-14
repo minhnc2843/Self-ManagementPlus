@@ -27,22 +27,22 @@ class UpdateGeneralSettingRequest extends FormRequest
             'logo' => [
                 'image',
                 'max:2048',
-                'dimensions:width=32,height=32',
+               
             ],
             'favicon' => [
                 'image',
                 'max:2048',
-                'dimensions:width=32,height=32',
+                // 'dimensions:width=32,height=32',
             ],
             'dark_logo' => [
                 'image',
                 'max:2048',
-                'dimensions:width=32,height=32',
+                
             ],
             'guest_logo' => [
                 'image',
                 'max:2048',
-                'dimensions:width=122,height=32',
+                // 'dimensions:width=122,height=32',
             ],
             'guest_background' => [
                 'image',
@@ -60,10 +60,8 @@ class UpdateGeneralSettingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'logo.dimensions' => 'The logo must be 32x32 pixels.',
-            'favicon.dimensions' => 'The favicon must be 32x32 pixels.',
-            'dark_logo.dimensions' => 'The dark logo must be 32x32 pixels.',
-            'guest_logo.dimensions' => 'The guest logo must be 122x32 pixels.',
+            // 'favicon.dimensions' => 'The favicon must be 32x32 pixels.',
+            // 'guest_logo.dimensions' => 'The guest logo must be 122x32 pixels.',
             'guest_background.dimensions' => 'The guest background must be 580x501 pixels.',
         ];
     }

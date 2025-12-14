@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ config('app.name', 'dashcode') }}</title>
+        <title>{{ config('app.name', 'Self-Management') }}</title>
         <x-favicon/>
         {{-- Scripts --}}
         @vite(['resources/css/app.scss', 'resources/js/custom/store.js'])
@@ -19,7 +19,7 @@
                         <div class="mb-6">
                             <x-application-logo />
                         </div>
-                        <h4>
+                        <h4  class="text-slate-800 dark:text-slate-400 font-bold">
                             {{ __('Unlock your project') }}
                             <span class="text-slate-800 dark:text-slate-400 font-bold">
                                 {{ __('Performance') }}
@@ -38,7 +38,7 @@
                             <script>
                                 document.write(new Date().getFullYear())
                             </script>
-                            , <a href="#">{{ __('Dashcode') }}</a>
+                            , <a href="#">{{ __('Selt-ManagementPlus') }}</a>
                             {{ __('All Rights Reserved.') }}
                         </div>
                     </div>

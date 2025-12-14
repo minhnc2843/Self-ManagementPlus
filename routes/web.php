@@ -7,7 +7,6 @@ use App\Http\Controllers\FormController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\TableController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\WidgetsController;
@@ -16,7 +15,9 @@ use App\Http\Controllers\ComponentsController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\GeneralSettingController;
-
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TransactionController;
 require __DIR__ . '/auth.php';
 
 Route::get('/', function () {
@@ -26,11 +27,24 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth', 'verified']], function () {
     // Dashboards
     Route::get('dashboard-analytic', [HomeController::class, 'analyticDashboard'])->name('dashboards.analytic');
-    Route::get('dashboard-ecommerce', [HomeController::class, 'ecommerceDashboard'])->name('dashboards.ecommerce');
-    Route::get('/banking-dashboard', function () {
-    return view('dashboards.banking-dashboard');
-    })->name('dashboards.banking');
+    Route::prefix('events')->group(function () {
+        Route::get('/json', [EventController::class, 'index'])->name('events.json');
+        Route::get('/', [EventController::class, 'showList'])->name('events.list');
+        Route::get('/create', [EventController::class, 'create'])->name('events.create');
+        Route::post('/', [EventController::class, 'store'])->name('events.store');
+        Route::get('/{id}/edit', [EventController::class, 'edit'])->name('events.edit');
+        Route::put('/{id}', [EventController::class, 'update'])->name('events.update');
+        Route::post('/{id}/status', [EventController::class, 'updateStatus'])->name('events.status');
+    });
 
+    Route::prefix('finance')->name('finance.')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::get('/create', [TransactionController::class, 'create'])->name('create');
+        Route::post('/store', [TransactionController::class, 'store'])->name('store');
+    });
+
+
+    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
     Route::get('/crm-dashboard', function () {
         return view('dashboards.crm-dashboard');
     })->name('dashboards.crm');
@@ -56,9 +70,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     //APPS
     Route::get('chat', [AppsController::class, 'chat'])->name('chat');
-    Route::get('email', [AppsController::class, 'email'])->name('email');
+ 
     Route::get('kanban', [AppsController::class, 'kanban'])->name('kanban');
-    Route::get('calender', [AppsController::class, 'calender'])->name('calender');
+   
     Route::get('todo', [AppsController::class, 'todo'])->name('todo');
     Route::get('project', [AppsController::class, 'projects'])->name('project');
     Route::get('project-details', [AppsController::class, 'projectDetails'])->name('project-details');
@@ -70,10 +84,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('utility-blog-details', [UtilityController::class, 'blogDetails'])->name('utility.blog-details');
     Route::get('utility-blank', [UtilityController::class, 'blank'])->name('utility.blank');
     Route::get('utility-settings', [UtilityController::class, 'settings'])->name('utility.settings');
-    Route::get('utility-profile', [UtilityController::class, 'profile'])->name('utility.profile');
     Route::get('utility-404', [UtilityController::class, 'error404'])->name('utility.404');
-    Route::get('utility-coming-soon', [UtilityController::class, 'comingSoon'])->name('utility.coming-soon');
-    Route::get('utility-under-maintenance', [UtilityController::class, 'underMaintenance'])->name('utility.under-maintenance');
 
 
     // ELEMENTS
@@ -111,45 +122,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('forms-select', [FormController::class, 'select'])->name('forms.select');
     Route::get('forms-date-time-picker', [FormController::class, 'dateTimePicker'])->name('forms.date-time-picker');
 
-    // TABLE
-    Route::get('table-basic', [TableController::class, 'basic'])->name('table.basic');
-    Route::get('table-advance', [TableController::class, 'advance'])->name('table.advance');
-
+   
     // CHART
     Route::get('chart', [ChartController::class, 'index'])->name('chart.index');
     Route::get('chart-apex', [ChartController::class, 'apexchart'])->name('chart.apex');
-
-    //Icon
-    Route::get('map', function () {
-        $breadcrumbsItems = [
-            [
-                'name' => 'Map',
-                'url' => '/map',
-                'active' => true
-            ],
-
-        ];
-        return view('elements.map.index', [
-            'pageTitle' => 'Map',
-            'breadcrumbItems' => $breadcrumbsItems,
-        ]);
-    })->name('map');
-
-    //Icon
-    Route::get('icon', function () {
-        $breadcrumbsItems = [
-            [
-                'name' => 'Icon',
-                'url' => '/icon',
-                'active' => true
-            ],
-
-        ];
-        return view('elements.icon.icon', [
-            'pageTitle' => 'Icon',
-            'breadcrumbItems' => $breadcrumbsItems,
-        ]);
-    })->name('icon');
 
     // Database Backup
     Route::resource('database-backups', DatabaseBackupController::class);

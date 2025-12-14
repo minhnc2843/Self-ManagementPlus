@@ -12,7 +12,7 @@ return [
    | Frontend URL is used to generate the verification link.
    |
    */
-    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
+    'frontend_url' => env('FRONTEND_URL', 'http://127.0.0.1:8000'),
     /*
     |--------------------------------------------------------------------------
     | Api Version
@@ -103,8 +103,6 @@ return [
     'locale' => 'en',
     'available_locales' => [
         'en'=>'united-states',
-        'de'=>'germany',
-        'fr'=>'france',
         'vi'=>'vietnam',
     ],
 

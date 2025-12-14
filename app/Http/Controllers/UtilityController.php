@@ -110,24 +110,6 @@ class UtilityController extends Controller
     /**
      * Profile
      */
-    public function profile()
-    {
-        $breadcrumbsItems = [
-            [
-                'name' => 'Profile',
-                'url' => '/profile',
-                'active' => true
-            ],
-
-        ];
-        return view('utility.profile', [
-            'pageTitle' => 'Profile',
-            'breadcrumbItems' => $breadcrumbsItems,
-        ]);
-    }
-
-
-
 
     /**
      * error404
@@ -154,40 +136,12 @@ class UtilityController extends Controller
     /**
      * Coming soon
      */
-    public function comingSoon()
-    {
-        $breadcrumbsItems = [
-            [
-                'name' => 'comingSoon',
-                'url' => '/coming-soon',
-                'active' => true
-            ],
-
-        ];
-        return view('utility.coming-soon', [
-            'pageTitle' => 'Coming Soon',
-            'breadcrumbItems' => $breadcrumbsItems,
-        ]);
-    }
+   
 
 
 
     /**
      * Under maintenance
      */
-    public function underMaintenance()
-    {
-        $breadcrumbsItems = [
-            [
-                'name' => 'underMaintenance',
-                'url' => '/under-maintenance',
-                'active' => true
-            ],
 
-        ];
-        return view('utility.under-maintenance', [
-            'pageTitle' => 'Under Maintenance',
-            'breadcrumbItems' => $breadcrumbsItems,
-        ]);
-    }
 }
