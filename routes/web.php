@@ -46,9 +46,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('/store', [TransactionController::class, 'store'])->name('store');
     });
 
-     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read.all');
-
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
+    Route::get('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
 
     // Route::get('/notifications/unread', [NotificationController::class, 'unread']);
     Route::get('/crm-dashboard', function () {
@@ -84,8 +84,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('project-details', [AppsController::class, 'projectDetails'])->name('project-details');
 
     // UTILITY
-    Route::get('utility-invoice', [UtilityController::class, 'invoice'])->name('utility.invoice');
-    Route::get('utility-pricing', [UtilityController::class, 'pricing'])->name('utility.pricing');
     Route::get('utility-blog', [UtilityController::class, 'blog'])->name('utility.blog');
     Route::get('utility-blog-details', [UtilityController::class, 'blogDetails'])->name('utility.blog-details');
     Route::get('utility-blank', [UtilityController::class, 'blank'])->name('utility.blank');
@@ -111,22 +109,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('components-badges', [ComponentsController::class, 'badges'])->name('components.badges');
     Route::get('components-pagination', [ComponentsController::class, 'pagination'])->name('components.pagination');
     Route::get('components-video', [ComponentsController::class, 'video'])->name('components.video');
-    Route::get('components-tooltip', [ComponentsController::class, 'tooltip'])->name('components.tooltip');
     // FORMS
-    Route::get('forms-input', [FormController::class, 'input'])->name('forms.input');
     Route::get('input-group', [FormController::class, 'group'])->name('forms.input-group');
     Route::get('input-layout', [FormController::class, 'layout'])->name('forms.input-layout');
-    Route::get('forms-input-validation', [FormController::class, 'validation'])->name('forms.input-validation');
     Route::get('forms-input-wizard', [FormController::class, 'wizard'])->name('forms.input-wizard');
-    Route::get('forms-input-mask', [FormController::class, 'inputMask'])->name('forms.input-mask');
     Route::get('forms-file-input', [FormController::class, 'fileInput'])->name('forms.file-input');
     Route::get('forms-repeater', [FormController::class, 'repeater'])->name('forms.repeater');
-    Route::get('forms-textarea', [FormController::class, 'textarea'])->name('forms.textarea');
-    Route::get('forms-checkbox', [FormController::class, 'checkbox'])->name('forms.checkbox');
-    Route::get('forms-radio', [FormController::class, 'radio'])->name('forms.radio');
-    Route::get('forms-switch', [FormController::class, 'switch'])->name('forms.switch');
     Route::get('forms-select', [FormController::class, 'select'])->name('forms.select');
-    Route::get('forms-date-time-picker', [FormController::class, 'dateTimePicker'])->name('forms.date-time-picker');
 
    
     // CHART
