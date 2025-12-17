@@ -12,8 +12,8 @@ class Transaction extends Model
 
     protected $fillable = [
         'user_id',
-        'type',             // income, expense
-        'category',         // Tên hạng mục (Ăn sáng, Xăng xe...)
+        'type',           
+        'category',        
         'amount',
         'transaction_date',
         'description'
@@ -35,10 +35,7 @@ class Transaction extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Accessor: Helper để hiển thị tên loại biến động bằng tiếng Việt
-     * Cách dùng: $transaction->type_label
-     */
+   
     public function getTypeLabelAttribute()
     {
         return $this->type === 'income' ? 'Thu nhập' : 'Chi tiêu';

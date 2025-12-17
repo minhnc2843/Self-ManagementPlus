@@ -121,111 +121,156 @@ class EventController extends Controller
 
     // Trong EventController.php
 
-    public function store(Request $request)
-    {
-        // --- 1. CHUẨN BỊ DỮ LIỆU GHÉP TỪ DATE VÀ TIME INPUT ---
-        
-        // Start Time: date là bắt buộc, time là tùy chọn (mặc định 00:00:00)
-        $startDateTime = $this->combineDateTime($request->input('start_date'), $request->input('start_time_hour'));
-        
-        // End Time: Cả date và time đều tùy chọn
-        $endDateTime = $this->combineDateTime($request->input('end_date'), $request->input('end_time_hour'));
-        
-        // Ghi đè vào request để Validation có thể kiểm tra định dạng
-        $request->merge(['start_time' => $startDateTime]);
-        if ($endDateTime) {
-            $request->merge(['end_time' => $endDateTime]);
-        }
+   public function store(Request $request)
+{
+    // 1. Gộp ngày + giờ
+    $startDateTime = $this->combineDateTime(
+        $request->input('start_date'),
+        $request->input('start_time_hour')
+    );
 
-        // --- 2. VALIDATION ---
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'event_type' => 'nullable|string|max:100',
-            'location' => 'nullable|string|max:255',
-            
-            'start_time' => 'required|date_format:Y-m-d\TH:i:s|after_or_equal:now', 
-            'end_time' => 'nullable|date_format:Y-m-d\TH:i:s|after_or_equal:start_time',
-            
-            'repeat_rule' => 'nullable|in:' . implode(',', self::VALID_REPEAT_RULES),
-            'repeat_meta' => 'nullable|array',
-            'priority' => 'nullable|in:' . implode(',', self::VALID_PRIORITIES),
-            'is_important' => 'nullable|boolean',
-            'reminders' => 'nullable|array',
-        ]);
-        
-        // Xử lý Repeat Rule và Meta
-        if (($request->repeat_rule === 'custom' || $request->repeat_rule === 'weekly') && empty($request->repeat_meta)) {
-            return back()->withInput()->withErrors(['repeat_meta' => 'Repeat meta is required for custom/weekly rule.']);
-        }
-        
-        // Chuyển đổi định dạng thời gian cho DB
-        $startCarbon = Carbon::parse($validatedData['start_time']);
-        $validatedData['start_time'] = $startCarbon->format('Y-m-d H:i:s');
-        
-        // --- 3. LOGIC MỚI: XỬ LÝ END_TIME MẶC ĐỊNH (00:00:00 ngày kế tiếp) ---
-        if (empty($validatedData['end_time'])) {
-            // Nếu end_time trống, đặt là 00:00:00 của ngày kế tiếp sau start_time
-            $validatedData['end_time'] = $startCarbon->copy()->addDay()->startOfDay()->format('Y-m-d H:i:s');
-        } else {
-            // Nếu có end_time, chuyển đổi sang format DB
-            $validatedData['end_time'] = Carbon::parse($validatedData['end_time'])->format('Y-m-d H:i:s');
-        }
-        
-        // Xử lý Reminders mặc định... (phần này không đổi)
-        $remindersData = $validatedData['reminders'] ?? [];
-        if (empty($remindersData)) {
-            $remindersData[] = $startCarbon->copy()->subDay()->format('Y-m-d H:i:s');
-        }
+    if (!$startDateTime) {
+        return back()->withErrors(['start_time' => 'Start time is required']);
+    }
 
-        // ... (Phần logic còn lại của store() không thay đổi: Transaction, Lưu, History, Redirect) ...
-        DB::beginTransaction();
-        try {
-            $eventData = array_merge($validatedData, [
-                'created_by' => Auth::id(),
-                'status' => 'upcoming',
-                'is_important' => $request->has('is_important') ? (bool)$request->input('is_important') : false,
-                'repeat_rule' => $validatedData['repeat_rule'] ?? 'null',
-            ]);
-            
-            unset($eventData['reminders']);
-            $event = Event::create($eventData);
+    $endDateTime = null;
+    if ($request->filled('end_date')) {
+        $endDateTime = $this->combineDateTime(
+            $request->input('end_date'),
+            $request->input('end_time_hour')
+        );
+    }
 
-            // Lưu Reminders
-            $remindersToInsert = [];
-            foreach ($remindersData as $timeString) {
-                try {
-                    $time = $this->parseReminderTime($timeString);
-                    if ($time && $time->isFuture()) {
-                        $remindersToInsert[] = [
-                            'event_id' => $event->id,
-                            'remind_at' => $time->format('Y-m-d H:i:s'),
-                            'is_sent' => false,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                    }
-                } catch (\Exception $e) {}
-            }
-            if (!empty($remindersToInsert)) {
-                EventReminder::insert($remindersToInsert);
-            }
+    $request->merge([
+        'start_time' => $startDateTime,
+        'end_time'   => $endDateTime,
+    ]);
 
-            // Lưu lịch sử và Xử lý lặp lại...
-            EventHistory::create(['event_id' => $event->id, 'user_id' => Auth::id(), 'action' => 'created', 'old_data' => null, 'new_data' => $event->toArray(),]);
+    // 2. Validation (KHÔNG ép repeat)
+    $validated = $request->validate([
+        'title'        => 'required|string|max:255',
+        'description'  => 'nullable|string',
+        'event_type'   => 'nullable|string|max:100',
+        'location'     => 'nullable|string|max:255',
 
-            if ($event->repeat_rule !== 'null') {
-                $this->repeatService->createNextRepeatedEvent($event);
-            }
+        'start_time'   => 'required|date_format:Y-m-d\TH:i:s',
+        'end_time'     => 'nullable|date_format:Y-m-d\TH:i:s|after_or_equal:start_time',
 
-            DB::commit();
-            return redirect()->route('events.list')->with('success', 'Sự kiện đã được tạo thành công.');
-            
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()->withErrors(['error' => 'Failed to create event: ' . $e->getMessage()]);
+        'repeat_rule'  => 'nullable|in:daily,weekly,monthly,yearly,custom',
+        'repeat_meta'  => 'nullable|array',
+
+        'priority'     => 'nullable|in:low,normal,high',
+        'is_important' => 'nullable|boolean',
+        'reminders'    => 'nullable|array',
+    ]);
+
+    // 3. Chuẩn hóa repeat_rule (RẤT QUAN TRỌNG)
+    $repeatRule = $request->filled('repeat_rule')
+        ? $request->input('repeat_rule')
+        : null;
+
+    // 4. Ép repeat_meta CHỈ khi thật sự có lặp
+    if (in_array($repeatRule, ['weekly', 'custom'], true)) {
+        if (empty($validated['repeat_meta'])) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'repeat_meta' => 'Repeat meta is required for this rule.'
+                ]);
         }
     }
+
+    // 5. Chuẩn hóa datetime cho DB
+    $startCarbon = Carbon::parse($validated['start_time']);
+    $validated['start_time'] = $startCarbon->format('Y-m-d H:i:s');
+
+    if (!empty($validated['end_time'])) {
+        $validated['end_time'] = Carbon::parse($validated['end_time'])
+            ->format('Y-m-d H:i:s');
+    } else {
+        $validated['end_time'] = $startCarbon
+            ->copy()
+            ->addDay()
+            ->startOfDay()
+            ->format('Y-m-d H:i:s');
+    }
+
+    // 6. Reminders
+    $reminders = $validated['reminders'] ?? [];
+    unset($validated['reminders']);
+
+    if (empty($reminders)) {
+        $defaultReminder = $startCarbon->copy()->subDay();
+        if ($defaultReminder->isFuture()) {
+            $reminders[] = $defaultReminder->format('Y-m-d H:i:s');
+        }
+    }
+
+    DB::beginTransaction();
+    try {
+        // 7. Create Event
+        $event = Event::create([
+            ...$validated,
+            'created_by'   => Auth::id(),
+            'status'       => 'upcoming',
+            'is_important' => (bool) $request->input('is_important', false),
+            'repeat_rule'  => $repeatRule, // NULL nếu không chọn
+        ]);
+
+        // 8. Insert Reminders
+        $rows = [];
+        foreach ($reminders as $timeString) {
+            try {
+                $time = $this->parseReminderTime($timeString);
+                if ($time && $time->isFuture()) {
+                    $rows[] = [
+                        'event_id'   => $event->id,
+                        'remind_at'  => $time->format('Y-m-d H:i:s'),
+                        'is_sent'    => false,
+                        'created_at'=> now(),
+                        'updated_at'=> now(),
+                    ];
+                }
+            } catch (\Throwable $e) {}
+        }
+
+        if ($rows) {
+            EventReminder::insert($rows);
+        }
+
+        // 9. History
+        EventHistory::create([
+            'event_id' => $event->id,
+            'user_id'  => Auth::id(),
+            'action'   => 'created',
+            'old_data' => null,
+            'new_data' => $event->toArray(),
+        ]);
+
+        // 10. Repeat
+        if ($repeatRule) {
+            $this->repeatService->createNextRepeatedEvent($event);
+        }
+
+        DB::commit();
+
+        return redirect()
+            ->route('events.list')
+            ->with('success', 'Sự kiện đã được tạo thành công.');
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+
+        return back()
+            ->withInput()
+            ->withErrors([
+                'error' => 'Create event failed: ' . $e->getMessage()
+            ]);
+    }
+}
+
+
+
 
 
     /**
@@ -242,136 +287,162 @@ class EventController extends Controller
     public function update(Request $request, $id)
 {
     $event = Event::findOrFail($id);
-    
-    // --- 1. CHUẨN BỊ VÀ GỘP DỮ LIỆU THỜI GIAN ---
-    $startDateTime = $this->combineDateTime($request->input('start_date'), $request->input('start_time_hour'));
+
+    // 1. Gộp datetime
+    $startDateTime = $this->combineDateTime(
+        $request->input('start_date'),
+        $request->input('start_time_hour')
+    );
+
+    if (!$startDateTime) {
+        return back()->withErrors(['start_time' => 'Start time is required']);
+    }
+
     $request->merge(['start_time' => $startDateTime]);
 
-    $shouldRemoveEndTime = $request->boolean('remove_end_time'); // Đọc trước validation
+    $shouldRemoveEndTime = $request->boolean('remove_end_time');
 
-    if ($shouldRemoveEndTime || empty($request->input('end_date'))) {
+    if ($shouldRemoveEndTime || !$request->filled('end_date')) {
         $request->merge(['end_time' => null]);
-        $endDateTime = null;
     } else {
-        $endDateTime = $this->combineDateTime($request->input('end_date'), $request->input('end_time_hour'));
-        $request->merge(['end_time' => $endDateTime]);
+        $request->merge([
+            'end_time' => $this->combineDateTime(
+                $request->input('end_date'),
+                $request->input('end_time_hour')
+            )
+        ]);
     }
 
-    // Merge remove_end_time = null để tránh prohibited (nếu bạn muốn giữ rule, comment dòng này và xóa prohibited)
-    $request->merge(['remove_end_time' => null]);
+    // 2. Validation (KHÔNG so sánh thời gian ở đây)
+    $validated = $request->validate([
+        'title'        => 'required|string|max:255',
+        'description'  => 'nullable|string',
+        'event_type'   => 'nullable|string|max:100',
+        'location'     => 'nullable|string|max:255',
 
-    // --- 2. VALIDATION (Strict hơn, copy từ store + fix) ---
-    $validatedData = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'event_type' => 'nullable|in:' . implode(',', array_map(fn($t) => "'$t'", self::EVENT_TYPES)), // Thêm in: nếu cần strict
-        'location' => 'nullable|string|max:255',
-        
-        'start_time' => 'required|date_format:Y-m-d\TH:i:s|after_or_equal:now', // Thêm after_or_equal:now như store
-        'end_time' => 'nullable|date_format:Y-m-d\TH:i:s|after_or_equal:start_time',
-        
-        'repeat_rule' => 'nullable|in:' . implode(',', self::VALID_REPEAT_RULES), // Fix: thêm in:
-        'repeat_meta' => 'nullable|array',
-        'priority' => 'nullable|in:' . implode(',', self::VALID_PRIORITIES), // Fix: thêm in:
+        'start_time'   => 'required|date_format:Y-m-d\TH:i:s',
+        'end_time'     => 'nullable|date_format:Y-m-d\TH:i:s',
+
+        'repeat_rule'  => 'nullable|in:daily,weekly,monthly,yearly,custom',
+        'repeat_meta'  => 'nullable',
+        'priority'     => 'nullable|in:low,normal,high',
         'is_important' => 'nullable|boolean',
-        'reminders' => 'nullable|array',
-        // 'remove_end_time' => 'boolean', // Nếu muốn validate, dùng boolean thay prohibited
+        'reminders'    => 'nullable|array',
     ]);
 
-    // Validate repeat_meta nếu custom/weekly (như store)
-    if (($validatedData['repeat_rule'] ?? null) === 'custom' || ($validatedData['repeat_rule'] ?? null) === 'weekly') {
-        if (empty($validatedData['repeat_meta'])) {
-            return back()->withInput()->withErrors(['repeat_meta' => 'Repeat meta is required for custom/weekly rule.']);
-        }
+    // 3. repeat_rule
+    $repeatRule = $request->filled('repeat_rule')
+        ? $request->repeat_rule
+        : null;
+
+    if (in_array($repeatRule, ['weekly', 'custom'], true) && empty($validated['repeat_meta'])) {
+        return back()
+            ->withInput()
+            ->withErrors(['repeat_meta' => 'Repeat meta is required']);
     }
 
-    // --- 3. XỬ LÝ DỮ LIỆU THỜI GIAN ---
-    $startCarbon = Carbon::parse($validatedData['start_time']);
-    $validatedData['start_time'] = $startCarbon->format('Y-m-d H:i:s');
-    
-    if (empty($validatedData['end_time']) && !$shouldRemoveEndTime) {
-        $validatedData['end_time'] = $startCarbon->copy()->addDay()->startOfDay()->format('Y-m-d H:i:s');
-    } elseif (isset($validatedData['end_time']) && $validatedData['end_time']) {
-        $validatedData['end_time'] = Carbon::parse($validatedData['end_time'])->format('Y-m-d H:i:s');
-    } // Else: null nếu remove
+    // 4. Chuẩn hóa datetime DB + so sánh
+    $startCarbon = Carbon::parse($validated['start_time']);
 
-    $oldEvent = $event->toArray(); // Lưu old cho history
-    $remindersInput = $validatedData['reminders'] ?? []; // Copy trước unset
-    unset($validatedData['reminders']); // Unset để update event
+    if (!empty($validated['end_time'])) {
+        $endCarbon = Carbon::parse($validated['end_time']);
 
-    // --- 4. TRANSACTION ---
+        if ($endCarbon->lt($startCarbon)) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'end_time' => 'Thời gian kết thúc phải sau hoặc bằng thời gian bắt đầu.'
+                ]);
+        }
+
+        $validated['end_time'] = $endCarbon->format('Y-m-d H:i:s');
+    } elseif (!$shouldRemoveEndTime) {
+        $validated['end_time'] = $startCarbon
+            ->copy()
+            ->addDay()
+            ->startOfDay()
+            ->format('Y-m-d H:i:s');
+    } else {
+        $validated['end_time'] = null;
+    }
+
+    $validated['start_time'] = $startCarbon->format('Y-m-d H:i:s');
+
+    // 5. Reminders
+    $reminders = $validated['reminders'] ?? [];
+    unset($validated['reminders']);
+
     DB::beginTransaction();
     try {
-        // Update Event
-        $event->update($validatedData);
+        $oldEvent = $event->toArray();
 
-        // Xử lý Reminders (di chuyển vào đây, fix lặp)
+        // 6. Update event
+        $event->update([
+            ...$validated,
+            'repeat_rule'  => $repeatRule,
+            'is_important' => (bool) $request->input('is_important', false),
+        ]);
+
+        // 7. Update reminders
         EventReminder::where('event_id', $event->id)->delete();
-        $remindersToInsert = [];
 
-        $remindersData = $remindersInput; // Dùng copy
-        if (empty($remindersData)) {
+        $rows = [];
+        if (empty($reminders)) {
             $defaultReminder = $startCarbon->copy()->subDay();
             if ($defaultReminder->isFuture()) {
-                $remindersData[] = $defaultReminder->format('Y-m-d H:i:s');
+                $reminders[] = $defaultReminder->format('Y-m-d H:i:s');
             }
         }
 
-        foreach ($remindersData as $timeString) {
+        foreach ($reminders as $timeString) {
             try {
-                // Giả sử input là Y-m-dTH:i, thêm :00 nếu cần
-                if (strpos($timeString, ':') === false || substr_count($timeString, ':') === 1) {
-                    $timeString .= ':00';
-                }
-                $timeString = str_replace('T', ' ', $timeString);
-                $time = Carbon::parse($timeString);
-                
-                if ($time->isFuture()) {
-                    $remindersToInsert[] = [
-                        'event_id' => $event->id,
-                        'remind_at' => $time->format('Y-m-d H:i:s'),
-                        'is_sent' => false,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                $time = $this->parseReminderTime($timeString);
+                if ($time && $time->isFuture()) {
+                    $rows[] = [
+                        'event_id'   => $event->id,
+                        'remind_at'  => $time->format('Y-m-d H:i:s'),
+                        'is_sent'    => false,
+                        'created_at'=> now(),
+                        'updated_at'=> now(),
                     ];
                 }
-            } catch (\Exception $e) {
-                // Log nếu cần: \Log::error("Reminder parse error: " . $e->getMessage());
-            }
-        }
-        if (!empty($remindersToInsert)) {
-            EventReminder::insert($remindersToInsert);
+            } catch (\Throwable $e) {}
         }
 
-        // Lưu History
+        if ($rows) {
+            EventReminder::insert($rows);
+        }
+
+        // 8. History
         EventHistory::create([
             'event_id' => $event->id,
-            'user_id' => Auth::id(),
-            'action' => 'updated',
+            'user_id'  => Auth::id(),
+            'action'   => 'updated',
             'old_data' => $oldEvent,
             'new_data' => $event->fresh()->toArray(),
         ]);
 
-        // Xử lý Repeat nếu thay đổi rule (basic, mở rộng nếu cần)
-        $oldRule = $oldEvent['repeat_rule'] ?? 'null';
-        $newRule = $validatedData['repeat_rule'] ?? 'null';
-        if ($newRule !== $oldRule && $newRule !== 'null') {
-            // Xóa old repeats nếu cần (giả sử service có method)
-            // $this->repeatService->deleteRelatedRepeats($event);
+        // 9. Repeat
+        if ($repeatRule && $repeatRule !== $oldEvent['repeat_rule']) {
             $this->repeatService->createNextRepeatedEvent($event);
-        } elseif ($newRule === 'null' && $oldRule !== 'null') {
-            // Xóa related repeats
-            // $this->repeatService->deleteRelatedRepeats($event);
         }
 
         DB::commit();
-        return redirect()->route('events.list')->with('success', 'Sự kiện đã được cập nhật thành công.');
-        
-    } catch (\Exception $e) {
+
+        return redirect()
+            ->route('events.list')
+            ->with('success', 'Sự kiện đã được cập nhật thành công.');
+
+    } catch (\Throwable $e) {
         DB::rollBack();
-        return back()->withInput()->withErrors(['error' => 'Cập nhật thất bại: ' . $e->getMessage()]);
+
+        return back()
+            ->withInput()
+            ->withErrors(['error' => 'Cập nhật thất bại: ' . $e->getMessage()]);
     }
 }
+
+
     /**
      * Cập nhật trạng thái (events.status)
      * Thường dùng AJAX

@@ -8,23 +8,22 @@ use Illuminate\Support\Facades\Auth;
 class NotificationController extends Controller
 {
     /**
-     * Lấy danh sách notification chưa đọc của user hiện tại
+     * Hiển thị danh sách toàn bộ thông báo.
      */
-    public function unread(Request $request)
+    public function index()
     {
-        $user = Auth::user();
-        $query = $user->unreadNotifications();
+        // Lấy thông báo của user đang đăng nhập, phân trang
+        $notifications = Auth::user()->notifications()->paginate(10);
 
-        // Giới hạn số lượng nếu có param limit
-        if ($request->has('limit')) {
-            $query->limit($request->limit);
-        }
+        return view('notifications.index', compact('notifications'));
+    }
 
-        $notifications = $query->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $notifications->map(fn ($n) => array_merge(['id' => $n->id, 'created_at' => $n->created_at], $n->data))
-        ]);
+    /**
+     * Đánh dấu tất cả là đã đọc.
+     */
+    public function markAllAsRead()
+    {
+        Auth::user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'Đã đánh dấu tất cả là đã đọc.');
     }
 }

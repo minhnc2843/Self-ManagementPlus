@@ -7,19 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $fillable = [
-        'title',
-        'description',
-        'event_type',
-        'location',
-        'created_by',
-        'start_time',
-        'end_time',
-        'repeat_rule',
-        'repeat_meta',
-        'priority',
-        'is_important',
-        'status',
-    ];
+    'title',
+    'description',
+    'event_type',
+    'location',
+    'start_time',
+    'end_time',
+    'repeat_rule',
+    'repeat_meta',
+    'priority',
+    'is_important',
+    'status',
+    'created_by',
+];
 
     protected $casts = [
         'repeat_meta' => 'array',
