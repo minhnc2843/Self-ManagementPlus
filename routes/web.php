@@ -24,6 +24,9 @@ Route::get('/', function () {
     return to_route('login');
 });
 
+
+
+   
 Route::group(['middleware' => ['auth', 'verified']], function () {
     // Dashboards
     Route::get('dashboard-analytic', [HomeController::class, 'analyticDashboard'])->name('dashboards.analytic');
@@ -43,8 +46,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('/store', [TransactionController::class, 'store'])->name('store');
     });
 
+     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read.all');
 
-    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
+
+    // Route::get('/notifications/unread', [NotificationController::class, 'unread']);
     Route::get('/crm-dashboard', function () {
         return view('dashboards.crm-dashboard');
     })->name('dashboards.crm');

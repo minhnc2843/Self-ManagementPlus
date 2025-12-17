@@ -3,6 +3,40 @@
         <div>
             <x-breadcrumb :page-title="$pageTitle" :breadcrumb-items="$breadcrumbItems" />
         </div>
+        {{-- GLOBAL MESSAGES --}}
+@if (session('success'))
+    <div class="alert alert-success mb-6">
+        <div class="flex items-center gap-2">
+            <iconify-icon icon="heroicons:check-circle" class="text-xl"></iconify-icon>
+            <span>{{ session('success') }}</span>
+        </div>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger mb-6">
+        <div class="flex items-center gap-2">
+            <iconify-icon icon="heroicons:x-circle" class="text-xl"></iconify-icon>
+            <span>{{ session('error') }}</span>
+        </div>
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger mb-6">
+        <div class="flex gap-3">
+            <iconify-icon icon="heroicons:exclamation-triangle" class="text-xl mt-1"></iconify-icon>
+            <div>
+                <p class="font-semibold mb-1">Vui lòng kiểm tra lại thông tin:</p>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+@endif
 
         <div class="card">
             <div class="card-body px-6 pb-6 pt-2">
@@ -15,7 +49,7 @@
                         {{-- Title (Bắt buộc) --}}
                         <div class="input-area">
                             <label for="title" class="form-label">Tiêu đề (Bắt buộc)</label>
-                            <input id="title" name="title" type="text" class="form-control" required
+                            <input id="title" name="title" type="text" class="form-control" 
                                 value="{{ old('title') }}">
                             @error('title') 
                                 <div class="font-medium text-danger-500 text-sm mt-1">{{ $message }}</div> 
@@ -90,7 +124,7 @@
                         <div class="input-area">
                             <label for="repeat_rule" class="form-label">Lặp lại</label>
                             <select id="repeat_rule" name="repeat_rule" class="form-control">
-                                <option value="null">Không lặp</option>
+                                <option value="">Không lặp</option>
                                 <option value="daily">Hằng ngày</option>
                                 <option value="weekly">Hằng tuần</option>
                                 <option value="monthly">Hằng tháng</option>

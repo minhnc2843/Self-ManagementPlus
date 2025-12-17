@@ -14,9 +14,9 @@ class Kernel extends ConsoleKernel
      * @return void
      */
     protected function schedule(Schedule $schedule)
-{
-    // $schedule->command('events:update-missed')->everyMinute();
-    // $schedule->command('events:send-reminders')->everyMinute();
+{    $schedule->command('notify:upcoming-events')->everyFiveMinutes();
+     $schedule->command('events:update-missed')->everyMinute();
+      $schedule->command('events:send-reminders')->everyMinute();
 }
 
     /**

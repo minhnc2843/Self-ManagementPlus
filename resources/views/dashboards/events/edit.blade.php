@@ -237,19 +237,54 @@
                             {{-- QUY TẮC LẶP LẠI --}}
                             <div class="input-area">
                                 <label for="repeat_rule" class="form-label">Quy tắc lặp lại</label>
-                                <div class="relative">
-                                    <select name="repeat_rule" id="repeat_rule" class="form-control @error('repeat_rule') is-invalid @enderror pr-10" onchange="toggleRepeatMeta()">
-                                        <option value="null" {{ old('repeat_rule', $event->repeat_rule ?? 'null') == 'null' ? 'selected' : '' }}>Không lặp</option>
-                                        <option value="daily" {{ old('repeat_rule', $event->repeat_rule) == 'daily' ? 'selected' : '' }}>Hàng ngày</option>
-                                        <option value="weekly" {{ old('repeat_rule', $event->repeat_rule) == 'weekly' ? 'selected' : '' }}>Hàng tuần</option>
-                                        <option value="monthly" {{ old('repeat_rule', $event->repeat_rule) == 'monthly' ? 'selected' : '' }}>Hàng tháng</option>
-                                        <option value="yearly" {{ old('repeat_rule', $event->repeat_rule) == 'yearly' ? 'selected' : '' }}>Hàng năm</option>
-                                        <option value="custom" {{ old('repeat_rule', $event->repeat_rule) == 'custom' ? 'selected' : '' }}>Tùy chỉnh</option>
+                               <div class="relative">
+                                    <select
+                                        name="repeat_rule"
+                                        id="repeat_rule"
+                                        class="form-control @error('repeat_rule') is-invalid @enderror pr-10"
+                                        onchange="toggleRepeatMeta()"
+                                    >
+                                        {{-- Không lặp = NULL --}}
+                                        <option value=""
+                                            {{ old('repeat_rule', $event->repeat_rule) === null ? 'selected' : '' }}>
+                                            Không lặp
+                                        </option>
+
+                                        <option value="daily"
+                                            {{ old('repeat_rule', $event->repeat_rule) === 'daily' ? 'selected' : '' }}>
+                                            Hàng ngày
+                                        </option>
+
+                                        <option value="weekly"
+                                            {{ old('repeat_rule', $event->repeat_rule) === 'weekly' ? 'selected' : '' }}>
+                                            Hàng tuần
+                                        </option>
+
+                                        <option value="monthly"
+                                            {{ old('repeat_rule', $event->repeat_rule) === 'monthly' ? 'selected' : '' }}>
+                                            Hàng tháng
+                                        </option>
+
+                                        <option value="yearly"
+                                            {{ old('repeat_rule', $event->repeat_rule) === 'yearly' ? 'selected' : '' }}>
+                                            Hàng năm
+                                        </option>
+
+                                        <option value="custom"
+                                            {{ old('repeat_rule', $event->repeat_rule) === 'custom' ? 'selected' : '' }}>
+                                            Tùy chỉnh
+                                        </option>
                                     </select>
-                                    <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 clear-input-btn" data-target="repeat_rule">
+
+                                    <button
+                                        type="button"
+                                        class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 clear-input-btn"
+                                        data-target="repeat_rule"
+                                    >
                                         <iconify-icon icon="heroicons:x-mark" class="w-4 h-4"></iconify-icon>
                                     </button>
                                 </div>
+
                                 @error('repeat_rule')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror

@@ -3,6 +3,40 @@
         <div>
             <x-breadcrumb :page-title="$pageTitle" :breadcrumb-items="$breadcrumbItems" />
         </div>
+        {{-- MESSAGE / ALERT --}}
+@if (session('success'))
+    <div class="alert alert-success mb-6">
+        <div class="flex items-center gap-2">
+            <iconify-icon icon="heroicons:check-circle" class="text-xl"></iconify-icon>
+            <span>{{ session('success') }}</span>
+        </div>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger mb-6">
+        <div class="flex items-center gap-2">
+            <iconify-icon icon="heroicons:x-circle" class="text-xl"></iconify-icon>
+            <span>{{ session('error') }}</span>
+        </div>
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger mb-6">
+        <div class="flex gap-3">
+            <iconify-icon icon="heroicons:exclamation-triangle" class="text-xl mt-1"></iconify-icon>
+            <div>
+                <p class="font-semibold mb-1">Có lỗi xảy ra:</p>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+@endif
 
         <div class="card">
           
@@ -241,6 +275,12 @@
                 });
             });
         });
+        setTimeout(() => {
+        document.querySelectorAll('.alert').forEach(el => {
+            el.classList.add('opacity-0', 'transition', 'duration-500');
+            setTimeout(() => el.remove(), 500);
+        });
+        }, 4000);
     </script>
     @endpush
     
