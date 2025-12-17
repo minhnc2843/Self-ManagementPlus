@@ -33,15 +33,15 @@
                     <li>
                         <a href="{{ route('dashboards.analytic') }}" class="navItem {{ (\Request::route()->getName() == 'dashboards.analytic') ? 'active' : '' }}">{{ __('Analytical Dashboard') }}</a>
                     </li>
-                    {{-- <li>
-                        <a href="{{ route('list.finanece') }}" class="navItem {{ (\Request::route()->getName() == 'list.finanece') ? 'active' : '' }}">{{ __('Finance Analytical') }}
+                    <li>
+                        <a href="{{ route('finance.index') }}" class="navItem {{ (\Request::route()->getName() == 'finance.index') ? 'active' : '' }}">{{ __('Finance') }}
                         </a>
-                    </li> --}}
+                    </li>
 
                      <li>
                         <a href="{{ route('events.list') }}"
                         class="navItem {{ (\Request::route()->getName() == 'events.list') ? 'active' : '' }}">
-                            {{ __('Events Manager') }}
+                            {{ __('Events') }}
                         </a>
                     </li>
                     <li>
@@ -117,12 +117,8 @@
                     <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
                 </a>
                 <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('utility.invoice') }}" class="{{ (\Request::route()->getName() == 'utility.invoice') ? 'active' : '' }}">{{ __('Invoice') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('utility.pricing') }}" class="{{ (\Request::route()->getName() == 'utility.pricing') ? 'active' : '' }}">{{ __('Pricing') }}</a>
-                    </li>
+                   
+            
                     <li>
                         <a href="{{ route('utility.blog') }}" class="{{ (\Request::route()->getName() == 'utility.blog') ? 'active' : '' }}">{{ __('Blog') }}</a>
                     </li>
@@ -209,9 +205,7 @@
                     <li>
                         <a href="{{ route('components.video') }}" class="{{ (\Request::route()->getName() == 'components.video') ? 'active' : '' }}">{{ __('Video') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('components.tooltip') }}" class="{{ (\Request::route()->getName() == 'components.tooltip') ? 'active' : '' }}">{{ __('Tooltip & Popover') }}</a>
-                    </li>
+                    
                 </ul>
             </li>
             <!-- Forms -->
@@ -224,48 +218,32 @@
                     <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
                 </a>
                 <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('forms.input') }}" class="{{ (\Request::route()->getName() == 'forms.input') ? 'active' : '' }}">{{ __('Input') }}</a>
-                    </li>
+                   
                     <li>
                         <a href="{{ route('forms.input-group') }}" class="{{ (\Request::route()->getName() == 'forms.input-group') ? 'active' : '' }}">{{ __('Input group') }}</a>
                     </li>
                     <li>
                         <a href="{{ route('forms.input-layout') }}" class="{{ (\Request::route()->getName() == 'forms.input-layout') ? 'active' : '' }}">{{ __('Input layout') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('forms.input-validation') }}" class="{{ (\Request::route()->getName() == 'forms.input-validation') ? 'active' : '' }}">{{ __('Form validation') }}</a>
-                    </li>
+                    
                     <li>
                         <a href="{{ route('forms.input-wizard') }}" class="{{ (\Request::route()->getName() == 'forms.input-wizard') ? 'active' : '' }}">{{ __('Wizard') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('forms.input-mask') }}" class="{{ (\Request::route()->getName() == 'forms.input-mask') ? 'active' : '' }}">{{ __('Input mask') }}</a>
-                    </li>
+                   
                     <li>
                         <a href="{{ route('forms.file-input') }}" class="{{ (\Request::route()->getName() == 'forms.file-input') ? 'active' : '' }}">{{ __('File input') }}</a>
                     </li>
                     <li>
                         <a href="{{ route('forms.repeater') }}" class="{{ (\Request::route()->getName() == 'forms.repeater') ? 'active' : '' }}">{{ __('From repeater') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('forms.textarea') }}" class="{{ (\Request::route()->getName() == 'forms.textarea') ? 'active' : '' }}">{{ __('Textarea') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('forms.checkbox') }}" class="{{ (\Request::route()->getName() == 'forms.checkbox') ? 'active' : '' }}">{{ __('Checkbox') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('forms.radio') }}" class="{{ (\Request::route()->getName() == 'forms.radio') ? 'active' : '' }}">{{ __('Radio button') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('forms.switch') }}" class="{{ (\Request::route()->getName() == 'forms.switch') ? 'active' : '' }}">{{ __('Switch') }}</a>
-                    </li>
+                   
+                   
+                   
+                   
                     <li>
                         <a href="{{ route('forms.select') }}" class="{{ (\Request::route()->getName() == 'forms.select') ? 'active' : '' }}">{{ __('Select') }}</a>
                     </li>
-                    <li>
-                        <a href="{{ route('forms.date-time-picker') }}" class="{{ (\Request::route()->getName() == 'forms.date-time-picker') ? 'active' : '' }}">{{ __('Date time picker') }}</a>
-                    </li>
+                    
                 </ul>
             </li>
             <!-- Tables -->

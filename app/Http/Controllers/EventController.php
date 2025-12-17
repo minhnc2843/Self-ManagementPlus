@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use App\Notifications\SystemNotification;
 class EventController extends Controller
 {
     protected $repeatService;
@@ -114,12 +114,7 @@ class EventController extends Controller
         return response()->json($events);
     }
 
-    /**
-     * Tạo lịch hẹn mới (events.store)
-     */
-    // Trong EventController.php
 
-    // Trong EventController.php
 
    public function store(Request $request)
 {
@@ -253,7 +248,14 @@ class EventController extends Controller
         }
 
         DB::commit();
-
+        $user = Auth::user();
+        $user->notify(new SystemNotification(
+            'Sự kiện mới',                          // $action (Loại)
+            $event->title,                          // $title (Tên sự kiện)
+            'Bạn đã tạo lịch hẹn'   , // $message
+            route('events.edit', $event->id),       // $url
+            'success'                               // $type
+        ));
         return redirect()
             ->route('events.list')
             ->with('success', 'Sự kiện đã được tạo thành công.');
@@ -270,19 +272,6 @@ class EventController extends Controller
 }
 
 
-
-
-
-    /**
-     * Cập nhật lịch hẹn (events.update)
-     */
-    // Trong EventController.php
-
-       // Trong EventController.php
-
-   // Trong EventController.php
-
-    // Trong EventController.php
 
     public function update(Request $request, $id)
 {
@@ -428,7 +417,14 @@ class EventController extends Controller
         }
 
         DB::commit();
-
+        $user = Auth::user();
+        $user->notify(new SystemNotification(
+            'Cập nhật sự kiện',                     // $action
+            $event->title,                          // $title
+            'Thông tin lịch hẹn đã được thay đổi.', // $message
+            route('events.edit', $event->id),       // $url
+            'warning'                               // $type
+        ));
         return redirect()
             ->route('events.list')
             ->with('success', 'Sự kiện đã được cập nhật thành công.');
@@ -488,6 +484,14 @@ class EventController extends Controller
             }
            
             DB::commit();
+           $user = Auth::user();
+            $user->notify(new SystemNotification(
+                'Xác nhận lịch hẹn thành công',                     // $action
+                $event->title,                          // $title
+                'Thông tin lịch hẹn đã được confirm.', // $message
+                route('events.edit', $event->id),       // $url
+                'warning'                               // $type
+            ));
             return response()->json(['message' => 'Status updated successfully'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
