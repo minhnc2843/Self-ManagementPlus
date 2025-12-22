@@ -52,7 +52,8 @@ class EventController extends Controller
             $query->where('is_important', true);
         }
 
-        $events = $query->orderBy('start_time', 'desc')->paginate(15)->withQueryString();
+        // Giảm số lượng bản ghi mỗi trang xuống (ví dụ 10) để dễ dàng kiểm tra hiển thị phân trang khi ít dữ liệu
+        $events = $query->orderBy('start_time', 'desc')->paginate(10)->withQueryString();
 
         return view('dashboards.events.index', compact('pageTitle', 'breadcrumbItems', 'events'));
     }

@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="space-y-8">
         <div>
-            <x-breadcrumb :page-title="$pageTitle" :breadcrumb-items="$breadcrumbItems" />
+            <x-breadcrumb :page-title="'Quản Lý sự kiện'" :breadcrumb-items="[['url' => route('events.list'), 'name' => 'Lịch hẹn']]" />
         </div>
         {{-- MESSAGE / ALERT --}}
 @if (session('success'))

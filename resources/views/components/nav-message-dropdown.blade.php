@@ -1,7 +1,5 @@
 @php
-    // Lấy 5 thông báo mới nhất
     $notifications = auth()->user()->notifications()->latest()->take(5)->get();
-    // Đếm số lượng chưa đọc
     $unreadCount = auth()->user()->unreadNotifications()->count();
 @endphp
 
@@ -73,12 +71,12 @@
                                 before:top-0 before:left-0">
                                 {{ $item->data['title'] ?? 'Thông báo mới' }}
                             </div>
-                            <div class="text-xs hover:text-[#68768A] text-slate-600 dark:text-slate-300 mb-1 truncate">
-                                {{ Str::limit($item->data['message'] ?? '', 50) }}
-                            </div>
-                            <div class="text-slate-400 dark:text-slate-400 text-xs">
-                                {{ $item->created_at->diffForHumans() }}
-                            </div>
+                           <div class="text-xs hover:text-[#68768A] text-slate-600 dark:text-slate-300 mb-1">
+                            {{ $item->data['message'] ?? '' }}
+                        </div>
+                        <div class="text-slate-400 dark:text-slate-400 text-xs">
+                            {{ $item->created_at->diffForHumans() }}
+                        </div>
                         </div>
 
                         @if(is_null($item->read_at))

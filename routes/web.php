@@ -40,12 +40,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('/{id}/status', [EventController::class, 'updateStatus'])->name('events.status');
     });
 
-    Route::prefix('finance')->name('finance.')->group(function () {
-        Route::get('/', [TransactionController::class, 'index'])->name('index');
-        Route::get('/create', [TransactionController::class, 'create'])->name('create');
-        Route::post('/store', [TransactionController::class, 'store'])->name('store');
-    });
-
+    Route::get('/finance', [TransactionController::class, 'index'])->name('finance.index');
+    Route::get('/finance/create', [TransactionController::class, 'create'])->name('finance.create');
+    Route::post('/finance/store', [TransactionController::class, 'store'])->name('finance.store');
+    Route::post('/finance/loans/store', [TransactionController::class, 'storeLoan'])->name('finance.loans.store');
+    Route::post('/finance/loans/{id}/pay', [TransactionController::class, 'payLoan'])->name('finance.loans.pay');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
     Route::get('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
