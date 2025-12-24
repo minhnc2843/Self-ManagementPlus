@@ -1,9 +1,9 @@
 @props(['breadcrumbItems' => [], 'pageTitle'=>'Default Title'])
 <div class="flex items-center justify-between">
     {{--Breadcrumb title start--}}
-    <h5 class="text-primary-500 font-Inter font-medium md:text-2xl mr-4 dark:text-white mb-1 sm:mb-0">
+    {{-- <h5 class="text-primary-500 font-Inter font-medium md:text-2xl mr-4 dark:text-white mb-1 sm:mb-0">
         {{ __($pageTitle) }}
-    </h5>
+    </h5> --}}
 
     {{--Breadcrumb list start--}}
     <ul class="m-0 p-0 list-none">
