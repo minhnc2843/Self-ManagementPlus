@@ -15,14 +15,16 @@ class LoanDueNotification extends Notification implements ShouldQueue, ShouldBro
 
     public $loan;
     public $amount;
+    public $type; // 'payment', 'create', 'due'
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($loan, $amount)
+    public function __construct($loan, $amount = 0, $type = 'payment')
     {
         $this->loan = $loan;
         $this->amount = $amount;
+        $this->type = $type;
     }
 
     /**
@@ -41,9 +43,21 @@ class LoanDueNotification extends Notification implements ShouldQueue, ShouldBro
      */
     public function toArray(object $notifiable): array
     {
+        $title = 'Thông báo khoản vay';
+        $message = '';
+
+        if ($this->type === 'create') {
+            $title = 'Khoản vay mới';
+            $message = 'Đã tạo khoản vay mới với: ' . $this->loan->contact_name . ' - ' . number_format($this->loan->amount) . ' VNĐ';
+        } elseif ($this->type === 'payment') {
+            $title = 'Thanh toán khoản vay';
+            $message = 'Bạn đã thanh toán ' . number_format($this->amount) . ' VNĐ cho khoản vay: ' . $this->loan->contact_name;
+        }
+
         return [
-            'title' => 'Tất toán khoản vay',
-            'message' => 'Bạn đã thanh toán ' . number_format($this->amount) . ' VNĐ cho khoản vay: ' . $this->loan->contact_name,
+            'title' => $title,
+            'message' => $message,
+            'type' => $this->type,
             'icon' => 'heroicons-outline:banknotes', // Icon hiển thị trên dropdown
             'color' => 'success', // Màu sắc (tuỳ theme hỗ trợ)
             'url' => route('finance.index'), // Link khi click vào
@@ -56,9 +70,20 @@ class LoanDueNotification extends Notification implements ShouldQueue, ShouldBro
      */
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
+        $title = 'Thông báo khoản vay';
+        $message = '';
+
+        if ($this->type === 'create') {
+            $title = 'Khoản vay mới';
+            $message = 'Đã tạo khoản vay mới với: ' . $this->loan->contact_name . ' - ' . number_format($this->loan->amount) . ' VNĐ';
+        } elseif ($this->type === 'payment') {
+            $title = 'Thanh toán khoản vay';
+            $message = 'Bạn đã thanh toán ' . number_format($this->amount) . ' VNĐ cho khoản vay: ' . $this->loan->contact_name;
+        }
+
         return new BroadcastMessage([
-            'title' => 'Tất toán khoản vay',
-            'message' => 'Bạn đã thanh toán ' . number_format($this->amount) . ' VNĐ cho khoản vay: ' . $this->loan->contact_name,
+            'title' => $title,
+            'message' => $message,
             'url' => route('finance.index'),
             'created_at' => now()->toIso8601String(), // Thời gian realtime
         ]);

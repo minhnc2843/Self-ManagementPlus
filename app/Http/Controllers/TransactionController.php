@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Notifications\LoanDueNotification;
+use Illuminate\Support\Facades\Log;
+
 class TransactionController extends Controller
 {
     public function index(Request $request)
@@ -174,9 +176,11 @@ class TransactionController extends Controller
         $validated['status'] = 'pending';
         $validated['paid_amount'] = 0;
 
-        DB::transaction(function () use ($validated) {
+        $loan = null;
+
+        DB::transaction(function () use ($validated, &$loan) {
             // 1. Tạo khoản vay
-            Loan::create($validated);
+            $loan = Loan::create($validated);
 
             // 2. Tự động trừ/cộng tiền trong Transaction
             $transData = [
@@ -198,6 +202,15 @@ class TransactionController extends Controller
 
             Transaction::create($transData);
         });
+
+        // Gửi thông báo realtime
+        if ($loan) {
+            try {
+                auth()->user()->notify(new LoanDueNotification($loan, $validated['amount'], 'create'));
+            } catch (\Exception $e) {
+                Log::error("Lỗi gửi thông báo realtime (Store Loan): " . $e->getMessage());
+            }
+        }
 
         return redirect()->route('finance.index')->with('success', 'Đã tạo khoản vay và cập nhật số dư!');
     }
@@ -221,7 +234,12 @@ class TransactionController extends Controller
             'payment_amount' => 'required|numeric|gt:0|lte:' . $loan->remaining_amount,
             'payment_date' => 'required|date',
         ], [
+            'payment_amount.required' => 'Vui lòng nhập số tiền thanh toán.',
+            'payment_amount.numeric' => 'Số tiền phải là số.',
+            'payment_amount.gt' => 'Số tiền thanh toán phải lớn hơn 0.',
             'payment_amount.lte' => 'Số tiền trả không được lớn hơn số nợ còn lại (' . number_format($loan->remaining_amount) . ' đ).',
+            'payment_date.required' => 'Vui lòng chọn ngày thanh toán.',
+            'payment_date.date' => 'Ngày thanh toán không hợp lệ.',
         ]);
 
         $amount = $request->payment_amount;
@@ -262,6 +280,13 @@ class TransactionController extends Controller
             Transaction::create($transData);
            
         });
+
+        // Gửi thông báo realtime
+        try {
+            $user->notify(new LoanDueNotification($loan, $amount, 'payment'));
+        } catch (\Exception $e) {
+            Log::error("Lỗi gửi thông báo realtime (Pay Loan): " . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', $message);
     }

@@ -141,7 +141,7 @@
 
                         <div class="space-y-4">
                             @forelse ($loans as $loan)
-                            <div class="p-3 border border-slate-100 dark:border-slate-700 rounded-md bg-white dark:bg-slate-800 shadow-sm">
+                            <div class="p-3 border border-slate-300 dark:border-slate-700 rounded-md bg-white dark:bg-slate-800 shadow-sm">
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
                                         <div class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -227,20 +227,20 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Người liên quan <span class="text-red-500">*</span></label>
-                            <input type="text" name="contact_name" class="form-control w-full border rounded p-2" required>
+                            <input type="text" name="contact_name" class="form-control w-full border rounded p-2">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Số tiền (VND) <span class="text-red-500">*</span></label>
-                        <input type="number" name="amount" min="1000" class="form-control w-full border rounded p-2" required>
+                        <input type="number" name="amount" min="1000" class="form-control w-full border rounded p-2">
                         <p class="text-xs text-slate-500 mt-1">Lưu ý: Hệ thống sẽ tự động tạo giao dịch Thu/Chi tương ứng.</p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-1">Ngày tạo <span class="text-red-500">*</span></label>
-                            <input type="date" name="loan_date" value="{{ date('Y-m-d') }}" class="form-control w-full border rounded p-2" required>
+                            <input type="date" name="loan_date" value="{{ date('Y-m-d') }}" class="form-control w-full border rounded p-2">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Ngày đến hạn (Để thông báo)</label>
@@ -273,7 +273,7 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium mb-1">Số tiền thanh toán đợt này <span class="text-red-500">*</span></label>
-                        <input type="number" name="payment_amount" id="paymentInput" min="1000" class="form-control w-full border rounded p-2 font-bold" required>
+                        <input type="number" name="payment_amount" id="paymentInput" min="0" class="form-control w-full border rounded p-2 font-bold">
                         <div class="flex justify-between text-xs mt-1">
                             <span class="text-slate-500">Còn lại cần trả: <span id="paymentRemaining" class="font-bold"></span></span>
                             <button type="button" onclick="fillFullAmount()" class="text-blue-600 hover:underline">Tất toán toàn bộ</button>
@@ -281,7 +281,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Ngày thực hiện</label>
-                        <input type="date" name="payment_date" value="{{ date('Y-m-d') }}" class="form-control w-full border rounded p-2" required>
+                        <input type="date" name="payment_date" value="{{ date('Y-m-d') }}" class="form-control w-full border rounded p-2" >
                     </div>
                 </div>
                 <div class="mt-6 flex justify-end gap-3">

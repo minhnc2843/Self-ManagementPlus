@@ -51,6 +51,15 @@ class EventController extends Controller
         if ($request->boolean('important')) {
             $query->where('is_important', true);
         }
+        // Logic tìm kiếm
+        if ($request->filled('q')) {
+            $search = $request->input('q');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
 
         // Giảm số lượng bản ghi mỗi trang xuống (ví dụ 10) để dễ dàng kiểm tra hiển thị phân trang khi ít dữ liệu
         $events = $query->orderBy('start_time', 'desc')->paginate(10)->withQueryString();
