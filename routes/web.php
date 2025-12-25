@@ -18,6 +18,7 @@ use App\Http\Controllers\GeneralSettingController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SharedExpenseController;
 require __DIR__ . '/auth.php';
 
 Route::get('/', function () {
@@ -49,6 +50,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
     Route::get('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
 
+    Route::get('expense-groups/{group}/add-expense', [SharedExpenseController::class, 'createExpenseView'])->name('expense-groups.add-expense-view');
+    Route::resource('expense-groups', SharedExpenseController::class);
+    Route::post('expense-groups/{group}/add-expense', [SharedExpenseController::class, 'storeExpense'])->name('expense-groups.add-expense');
     // Route::get('/notifications/unread', [NotificationController::class, 'unread']);
     Route::get('/crm-dashboard', function () {
         return view('dashboards.crm-dashboard');

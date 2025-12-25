@@ -34,6 +34,9 @@
                         <a href="{{ route('dashboards.analytic') }}" class="navItem {{ (\Request::route()->getName() == 'dashboards.analytic') ? 'active' : '' }}">{{ __('Analytical Dashboard') }}</a>
                     </li>
                     <li>
+                        <a href="{{ route('notifications.index') }}" class="navItem {{ (\Request::route()->getName() == 'notifications.index') ? 'active' : '' }}">{{ __('Notifications') }}</a>
+                    </li>
+                    <li>
                         <a href="{{ route('finance.index') }}" class="navItem {{ (\Request::route()->getName() == 'finance.index') ? 'active' : '' }}">{{ __('Finance') }}
                         </a>
                     </li>
@@ -42,6 +45,12 @@
                         <a href="{{ route('events.list') }}"
                         class="navItem {{ (\Request::route()->getName() == 'events.list') ? 'active' : '' }}">
                             {{ __('Events') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('expense-groups.index') }}"
+                        class="navItem {{ (\Request::route()->getName() == 'expense-groups.index') ? 'active' : '' }}">
+                            {{ __('Expenses') }}
                         </a>
                     </li>
                     <li>
