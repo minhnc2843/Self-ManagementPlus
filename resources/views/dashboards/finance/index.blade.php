@@ -68,7 +68,11 @@
 
                     {{-- Biểu đồ (Updated ID) --}}
                     <div class="legend-ring overflow-x-auto">
-                        <div id="revenue-barchart" class="min-w-[600px]"></div>
+                      <div id="revenue-barchart" class="min-w-[600px]"
+                        data-income="{{ json_encode($chartData['income']) }}"
+                        data-expense="{{ json_encode($chartData['expense']) }}"
+                        data-labels="{{ json_encode($chartData['labels']) }}">
+                    </div>
                     </div>
                 </div>
 
@@ -294,72 +298,6 @@
 
     {{-- SCRIPTS: Modal & Chart (Updated) --}}
     @push('scripts')
-    <script type="module">
-        // 1. Script cho Modal Thanh toán
-        window.currentRemaining = 0;
-        window.openPaymentModal = function(id, name, remaining) {
-            window.currentRemaining = remaining;
-            document.getElementById('paymentLoanName').innerText = 'Khoản vay: ' + name;
-            document.getElementById('paymentRemaining').innerText = new Intl.NumberFormat('vi-VN').format(remaining);
-            document.getElementById('paymentInput').value = '';
-            document.getElementById('paymentInput').max = remaining;
-            
-            // Set action URL dynamically
-            let url = "{{ route('finance.loans.pay', ':id') }}";
-            url = url.replace(':id', id);
-            document.getElementById('paymentForm').action = url;
-            
-            document.getElementById('paymentModal').showModal();
-        }
-
-        window.fillFullAmount = function() {
-            document.getElementById('paymentInput').value = window.currentRemaining;
-        }
-
-        // 2. Script cho Biểu đồ (Fix lỗi mất biểu đồ)
-        const chartConfig = {
-            series: [{
-                name: 'Thu nhập',
-                data: @json($chartData['income'])
-            }, {
-                name: 'Chi tiêu',
-                data: @json($chartData['expense'])
-            }],
-            chart: {
-                type: 'bar',
-                height: 350,
-                toolbar: { show: false },
-                fontFamily: 'Inter, sans-serif'
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    borderRadius: 4
-                },
-            },
-            dataLabels: { enabled: false },
-            stroke: { show: true, width: 2, colors: ['transparent'] },
-            xaxis: {
-                categories: @json($chartData['labels']),
-            },
-            fill: { opacity: 1 },
-            colors: ['#4669fa', '#f1595c'], 
-            tooltip: {
-                y: {
-                    formatter: function (val) {
-                        return new Intl.NumberFormat('vi-VN').format(val) + " đ"
-                    }
-                }
-            }
-        };
-
-        // Render vào ID mới: revenue-barchart
-        const chartElement = document.querySelector("#revenue-barchart");
-        if(chartElement) {
-            const chart = new ApexCharts(chartElement, chartConfig);
-            chart.render();
-        }
-    </script>
+    @vite(['resources/js/custom/finance.js'])
     @endpush
 </x-app-layout>
