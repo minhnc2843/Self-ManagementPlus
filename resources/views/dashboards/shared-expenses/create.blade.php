@@ -6,7 +6,7 @@
             </h4>
             <div class="flex sm:space-x-4 space-x-2 sm:justify-end items-center rtl:space-x-reverse">
                 <a href="{{ route('expense-groups.index') }}" class="btn inline-flex justify-center btn-outline-dark">
-                    Quay lại
+                  <i class="iconify-icon text-lg" data-icon="heroicons-outline:arrow-left" data-inline="false"></i>  Quay lại
                 </a>
             </div>
         </div>

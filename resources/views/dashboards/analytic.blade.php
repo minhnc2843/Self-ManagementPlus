@@ -407,6 +407,7 @@
 
 
     @push('scripts')
+    {{-- @vite(['resources/css/app.scss', 'resources/js/app.js']) --}}
     @vite(['resources/js/plugins/jquery-jvectormap-2.0.5.min.js'])
     @vite(['resources/js/plugins/jquery-jvectormap-world-mill-en.js'])
     @vite(['resources/js/custom/chart-active.js'])

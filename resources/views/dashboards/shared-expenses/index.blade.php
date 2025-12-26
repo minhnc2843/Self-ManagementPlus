@@ -2,8 +2,8 @@
     <div class="space-y-8">
         <div class="flex justify-between items-center">
             <div>
-                <h4 class="font-medium lg:text-2xl text-xl capitalize text-slate-900 inline-block ltr:pr-4 rtl:pl-4">
-                    Quản lý chi tiêu chung
+                <h4 class="font-medium lg:text-2xl text-xl capitalize text-primary-500 inline-block ltr:pr-4 rtl:pl-4">
+                    <iconify-icon icon="heroicons-outline:home" class="text-xl mr-2"></iconify-icon>Group 
                 </h4>
             </div>
             <a href="{{ route('expense-groups.create') }}" class="btn inline-flex justify-center btn-dark">
@@ -19,7 +19,7 @@
             <div class="card">
                 <div class="card-body p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h5 class="text-slate-900 font-medium text-lg">{{ $group->name }}</h5>
+                        <h5 class="text-slate-900 font-medium text-lg"> <iconify-icon icon="heroicons-outline:user-group" class="text-primary-500 mr-2"></iconify-icon>{{ $group->name }}</h5>
                         <div class="text-xs text-slate-500">{{ $group->members_count }} thành viên</div>
                     </div>
                     <p class="text-slate-500 text-sm mb-4">{{ $group->description ?? 'Không có mô tả' }}</p>
