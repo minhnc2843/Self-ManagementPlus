@@ -72,6 +72,23 @@ import validate from "jquery-validation";
 window.validate = validate;
 
 import.meta.glob(["../images/**"]);
+// 1. Import jQuery và gán vào window (để các plugin cũ hiểu được $)
+// import jQuery from 'jquery';
+// window.$ = window.jQuery = jQuery;
+
+// // 2. Import các plugin (Vite sẽ tự bundle chúng vào)
+// // Lưu ý: Nếu thư viện nằm trong node_modules thì import tên gói.
+// // Nếu là file tĩnh trong folder resources thì import đường dẫn tương đối.
+// import './plugins/jquery-jvectormap-2.0.5.min.js';
+// import './plugins/jquery-jvectormap-world-mill-en.js';
+
+// // 3. Import các file logic custom
+// import './custom/store.js';
+// import './custom/chart-active.js';
+// import './main.js';
+
+// // Code JS chính của app ở dưới đây...
+// console.log('App loaded with all dependencies');
 // window.Echo.private('private-user-' + window.Laravel.user)
 //     .notification((data) => {
 

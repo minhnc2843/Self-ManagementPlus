@@ -17,3 +17,23 @@ export default defineConfig({
         }),
     ],
 });
+// import { defineConfig } from "vite";
+// import laravel from "laravel-vite-plugin";
+
+// export default defineConfig({
+//     plugins: [
+//         laravel({
+//             input: [
+//                 "resources/css/app.scss", // File CSS chính
+//                 "resources/js/app.js",    // File JS chính (DUY NHẤT)
+//             ],
+//             refresh: true,
+//         }),
+//     ],
+//     // Tối ưu thêm resolve alias để import dễ hơn (tùy chọn)
+//     resolve: {
+//         alias: {
+//             '$': 'jQuery',
+//         },
+//     },
+// });

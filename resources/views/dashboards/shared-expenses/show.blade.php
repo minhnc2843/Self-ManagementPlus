@@ -9,10 +9,14 @@
                 <p class="text-slate-500 text-sm mt-1">{{ $group->description }}</p>
             </div>
             <div>
+                 <a href="{{ route('expense-groups.index') }}" class="btn btn-secondary btn-sm shadow-lg hover:shadow-xl transition-all mr-2">
+                       <iconify-icon icon="heroicons-outline:receipt-refund" class="text-primary-500 mr-1"></iconify-icon> Back
+                </a>
                 <a href="{{ route('expense-groups.add-expense-view', $group->id) }}" class="btn btn-primary btn-sm shadow-lg hover:shadow-xl transition-all">
                     <iconify-icon icon="heroicons-outline:plus" class="mr-1"></iconify-icon> Thêm khoản chi
                 </a>
-            </div>
+                
+            </div>          
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
