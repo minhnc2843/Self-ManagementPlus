@@ -19,6 +19,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SharedExpenseController;
+use App\Http\Controllers\DashboardController;
 require __DIR__ . '/auth.php';
 
 Route::get('/', function () {
@@ -30,7 +31,19 @@ Route::get('/', function () {
    
 Route::group(['middleware' => ['auth', 'verified']], function () {
     // Dashboards
-    Route::get('dashboard-analytic', [HomeController::class, 'analyticDashboard'])->name('dashboards.analytic');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/update-banner', [DashboardController::class, 'updateBanner'])->name('dashboard.update-banner');
+
+    Route::get('/dashboard/goals/create', [DashboardController::class, 'createGoalPage'])->name('goals.create');
+    Route::post('/dashboard/goals', [DashboardController::class, 'storeGoal'])->name('goals.store');
+    Route::put('/dashboard/goals/{id}', [DashboardController::class, 'updateGoal'])->name('goals.update');
+    Route::delete('/dashboard/goals/{id}', [DashboardController::class, 'destroyGoal'])->name('goals.destroy');
+
+    Route::get('/dashboard/plans/create', [DashboardController::class, 'createPlanPage'])->name('plans.create');
+    Route::post('/dashboard/plans', [DashboardController::class, 'storePlan'])->name('plans.store');
+    Route::post('/dashboard/plans/{id}/toggle', [DashboardController::class, 'togglePlanStatus'])->name('plans.toggle');
+    Route::delete('/dashboard/plans/{id}', [DashboardController::class, 'destroyPlan'])->name('plans.destroy');
+    
     Route::prefix('events')->group(function () {
         Route::get('/json', [EventController::class, 'index'])->name('events.json');
         Route::get('/', [EventController::class, 'showList'])->name('events.list');
@@ -53,14 +66,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('expense-groups/{group}/add-expense', [SharedExpenseController::class, 'createExpenseView'])->name('expense-groups.add-expense-view');
     Route::resource('expense-groups', SharedExpenseController::class);
     Route::post('expense-groups/{group}/add-expense', [SharedExpenseController::class, 'storeExpense'])->name('expense-groups.add-expense');
-    // Route::get('/notifications/unread', [NotificationController::class, 'unread']);
-    Route::get('/crm-dashboard', function () {
-        return view('dashboards.crm-dashboard');
-    })->name('dashboards.crm');
 
-    Route::get('/project-dashboard', function () {
-        return view('dashboards.project-dashboard');
-    })->name('dashboards.project');
+   
+    
 
     // Locale
     Route::get('setlocale/{locale}', SetLocaleController::class)->name('setlocale');
@@ -121,10 +129,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('forms-select', [FormController::class, 'select'])->name('forms.select');
 
    
-    // CHART
-    Route::get('chart', [ChartController::class, 'index'])->name('chart.index');
-    Route::get('chart-apex', [ChartController::class, 'apexchart'])->name('chart.apex');
-
+  
     // Database Backup
     Route::resource('database-backups', DatabaseBackupController::class);
     Route::get('database-backups-download/{fileName}', [DatabaseBackupController::class, 'databaseBackupDownload'])->name('database-backups.download');
