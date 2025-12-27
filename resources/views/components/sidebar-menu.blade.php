@@ -31,7 +31,7 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li>
-                        <a href="{{ route('dashboards.analytic') }}" class="navItem {{ (\Request::route()->getName() == 'dashboards.analytic') ? 'active' : '' }}">{{ __('Analytical Dashboard') }}</a>
+                        <a href="{{ route('dashboard') }}" class="navItem {{ (\Request::route()->getName() == 'dashboard') ? 'active' : '' }}">{{ __('Home') }}</a>
                     </li>
                     <li>
                         <a href="{{ route('notifications.index') }}" class="navItem {{ (\Request::route()->getName() == 'notifications.index') ? 'active' : '' }}">{{ __('Notifications') }}</a>
@@ -53,20 +53,6 @@
                             {{ __('Expenses') }}
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('dashboards.crm') }}"
-                        class="navItem {{ (\Request::route()->getName() == 'dashboards.crm') ? 'active' : '' }}">
-                            {{ __('CRM Dashboard') }}
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('dashboards.project') }}"
-                        class="navItem {{ (\Request::route()->getName() == 'dashboards.project') ? 'active' : '' }}">
-                            {{ __('Project Dashboard') }}
-                        </a>
-                    </li>
-
                 </ul>
             </li>
             <!-- Apps Area -->
@@ -257,24 +243,7 @@
             </li>
             <!-- Tables -->
             
-            <!-- Charts -->
-            <li class="{{ (\Request::route()->getName() == 'chart*') ? 'active' : '' }}">
-                <a href="javascript:void(0)" class="navItem">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:chart-bar"></iconify-icon>
-                        <span>{{ __('Chart') }}</span>
-                    </span>
-                    <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
-                </a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('chart.apex') }}" class="{{ (\Request::route()->getName() == 'chart.apex') ? 'active' : '' }}">{{ __('Apex Chart') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('chart.index') }}" class="{{ (\Request::route()->getName() == 'chart.index') ? 'active' : '' }}">{{ __('Chart js') }}</a>
-                    </li>
-                </ul>
-            </li>
+           
             <!-- Map -->
             
             <!-- Icons -->
