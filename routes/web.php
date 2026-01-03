@@ -1,17 +1,13 @@
 <?php
 
-use App\Http\Controllers\ChartController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppsController;
-use App\Http\Controllers\FormController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UtilityController;
-use App\Http\Controllers\WidgetsController;
 use App\Http\Controllers\SetLocaleController;
-use App\Http\Controllers\ComponentsController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\GeneralSettingController;
@@ -26,23 +22,21 @@ Route::get('/', function () {
     return to_route('login');
 });
 
-
-
-   
 Route::group(['middleware' => ['auth', 'verified']], function () {
     // Dashboards
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/dashboard/update-banner', [DashboardController::class, 'updateBanner'])->name('dashboard.update-banner');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/banner/edit', [DashboardController::class, 'editBannerPage'])->name('dashboard.banner.edit'); // Trang form sửa
+    Route::post('/dashboard/update-banner', [DashboardController::class, 'updateBanner'])->name('dashboard.update-banner'); //chưa có
 
     Route::get('/dashboard/goals/create', [DashboardController::class, 'createGoalPage'])->name('goals.create');
-    Route::post('/dashboard/goals', [DashboardController::class, 'storeGoal'])->name('goals.store');
-    Route::put('/dashboard/goals/{id}', [DashboardController::class, 'updateGoal'])->name('goals.update');
-    Route::delete('/dashboard/goals/{id}', [DashboardController::class, 'destroyGoal'])->name('goals.destroy');
+    Route::post('/dashboard/goals', [DashboardController::class, 'storeGoal'])->name('goals.store');//chưa có
+    Route::put('/dashboard/goals/{id}', [DashboardController::class, 'updateGoal'])->name('goals.update');// chưa có
+    Route::delete('/dashboard/goals/{id}', [DashboardController::class, 'destroyGoal'])->name('goals.destroy');// chưa có
 
     Route::get('/dashboard/plans/create', [DashboardController::class, 'createPlanPage'])->name('plans.create');
-    Route::post('/dashboard/plans', [DashboardController::class, 'storePlan'])->name('plans.store');
-    Route::post('/dashboard/plans/{id}/toggle', [DashboardController::class, 'togglePlanStatus'])->name('plans.toggle');
-    Route::delete('/dashboard/plans/{id}', [DashboardController::class, 'destroyPlan'])->name('plans.destroy');
+    Route::post('/dashboard/plans', [DashboardController::class, 'storePlan'])->name('plans.store');// chưa có
+    Route::post('/dashboard/plans/{id}/toggle', [DashboardController::class, 'togglePlanStatus'])->name('plans.toggle');// chưa có
+    Route::delete('/dashboard/plans/{id}', [DashboardController::class, 'destroyPlan'])->name('plans.destroy');// chưa có
     
     Route::prefix('events')->group(function () {
         Route::get('/json', [EventController::class, 'index'])->name('events.json');
@@ -86,8 +80,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
     Route::post('general-settings-logo', [GeneralSettingController::class, 'logoUpdate'])->name('general-settings.logo');
 
     //APPS
-    Route::get('chat', [AppsController::class, 'chat'])->name('chat');
- 
     Route::get('kanban', [AppsController::class, 'kanban'])->name('kanban');
    
     Route::get('todo', [AppsController::class, 'todo'])->name('todo');
@@ -96,41 +88,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
     // UTILITY
     Route::get('utility-blog', [UtilityController::class, 'blog'])->name('utility.blog');
-    Route::get('utility-blog-details', [UtilityController::class, 'blogDetails'])->name('utility.blog-details');
-    Route::get('utility-blank', [UtilityController::class, 'blank'])->name('utility.blank');
     Route::get('utility-settings', [UtilityController::class, 'settings'])->name('utility.settings');
     Route::get('utility-404', [UtilityController::class, 'error404'])->name('utility.404');
 
-
-    // ELEMENTS
-    Route::get('widget-basic', [WidgetsController::class, 'basic'])->name('widget.basic');
-    Route::get('widget-statistic', [WidgetsController::class, 'statistic'])->name('widget.statistic');
-    Route::get('components-typography', [ComponentsController::class, 'typography'])->name('components.typography');
-    Route::get('components-colors', [ComponentsController::class, 'color'])->name('components.colors');
-    Route::get('components-alert', [ComponentsController::class, 'alert'])->name('components.alert');
-    Route::get('components-button', [ComponentsController::class, 'button'])->name('components.button');
-    Route::get('components-card', [ComponentsController::class, 'card'])->name('components.card');
-    Route::get('components-carousel', [ComponentsController::class, 'carousel'])->name('components.carousel');
-    Route::get('components-dropdown', [ComponentsController::class, 'dropdown'])->name('components.dropdown');
-    Route::get('components-image', [ComponentsController::class, 'image'])->name('components.image');
-    Route::get('components-modal', [ComponentsController::class, 'modal'])->name('components.modal');
-    Route::get('components-progress-bar', [ComponentsController::class, 'progressBar'])->name('components.progress-bar');
-    Route::get('components-placeholder', [ComponentsController::class, 'placeholder'])->name('components.placeholder');
-    Route::get('components-tab', [ComponentsController::class, 'tab'])->name('components.tab');
-    Route::get('components-badges', [ComponentsController::class, 'badges'])->name('components.badges');
-    Route::get('components-pagination', [ComponentsController::class, 'pagination'])->name('components.pagination');
-    Route::get('components-video', [ComponentsController::class, 'video'])->name('components.video');
-    // FORMS
-    Route::get('input-group', [FormController::class, 'group'])->name('forms.input-group');
-    Route::get('input-layout', [FormController::class, 'layout'])->name('forms.input-layout');
-    Route::get('forms-input-wizard', [FormController::class, 'wizard'])->name('forms.input-wizard');
-    Route::get('forms-file-input', [FormController::class, 'fileInput'])->name('forms.file-input');
-    Route::get('forms-repeater', [FormController::class, 'repeater'])->name('forms.repeater');
-    Route::get('forms-select', [FormController::class, 'select'])->name('forms.select');
-
-   
-  
     // Database Backup
     Route::resource('database-backups', DatabaseBackupController::class);
     Route::get('database-backups-download/{fileName}', [DatabaseBackupController::class, 'databaseBackupDownload'])->name('database-backups.download');
+    Route::get('icon', function () {
+    return view('elements.icon.icon');
+});
 });

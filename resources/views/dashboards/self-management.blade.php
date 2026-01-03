@@ -1,13 +1,8 @@
 <x-app-layout>
     {{-- Main Container with Alpine Data for Modals --}}
     <div class="space-y-6" x-data="{ 
-        bannerModal: false,
         editGoalModal: false,
-        currentGoal: { id: null, title: '', progress: 0, color: 'primary' },
-        openEditGoal(goal) {
-            this.currentGoal = goal;
-            this.editGoalModal = true;
-        }
+        currentGoal: { id: null, title: '', progress: 0, color: 'primary' }
     }">
         
         {{-- SECTION 1: BANNER & HEADER --}}
@@ -31,10 +26,10 @@
                 </div>
                 
                 {{-- Edit Banner Button --}}
-                <button @click="bannerModal = true" class="mt-6 md:mt-0 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full border border-white/20 transition-all shadow-lg">
+                <a href="{{ route('dashboard.banner.edit') }}" class="mt-6 md:mt-0 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full border border-white/20 transition-all shadow-lg cursor-pointer relative z-20">
                     <iconify-icon icon="heroicons:pencil-square" class="text-xl"></iconify-icon>
                     <span class="text-sm font-medium">Cập nhật giao diện</span>
-                </button>
+                </a>
             </div>
         </div>
 
@@ -70,7 +65,7 @@
                                     
                                     {{-- Actions --}}
                                     <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button @click="openEditGoal({{ json_encode($goal) }})" class="p-2 rounded-full hover:bg-slate-200 text-slate-500 transition">
+                                        <button type="button" @click='currentGoal = @json($goal); editGoalModal = true' class="p-2 rounded-full hover:bg-slate-200 text-slate-500 transition">
                                             <iconify-icon icon="heroicons:pencil"></iconify-icon>
                                         </button>
                                         <form action="{{ route('goals.destroy', $goal->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa mục tiêu này?');">
@@ -116,7 +111,7 @@
                                 <li class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition flex items-start gap-3 group">
                                     <div class="pt-1">
                                         <input type="checkbox" 
-                                               onchange="togglePlan({{ $plan->id }})" 
+                                               @change="togglePlan({{ $plan->id }})" 
                                                {{ $plan->status == 'completed' ? 'checked' : '' }} 
                                                class="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded cursor-pointer">
                                     </div>
@@ -185,30 +180,6 @@
             </div>
         </div>
 
-        {{-- MODAL: UPDATE BANNER --}}
-        <div x-show="bannerModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div @click.away="bannerModal = false" class="bg-white dark:bg-slate-800 w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-fade-in-up">
-                <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                    <h3 class="font-bold text-lg">Cập nhật giao diện</h3>
-                    <button @click="bannerModal = false" class="text-slate-400 hover:text-slate-600"><iconify-icon icon="heroicons:x-mark" class="text-xl"></iconify-icon></button>
-                </div>
-                <form action="{{ route('dashboard.update-banner') }}" method="POST" enctype="multipart/form-data" class="p-5 space-y-4">
-                    @csrf
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Tiêu đề chính</label>
-                        <input type="text" name="banner_title" value="{{ $settings->banner_title }}" class="form-input w-full rounded-lg border-slate-300">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Ảnh nền mới</label>
-                        <input type="file" name="banner_image" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                    </div>
-                    <div class="pt-2">
-                        <button type="submit" class="btn btn-dark w-full">Lưu thay đổi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         {{-- MODAL: EDIT GOAL --}}
         <div x-show="editGoalModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div @click.away="editGoalModal = false" class="bg-white dark:bg-slate-800 w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-fade-in-up">
@@ -255,24 +226,28 @@
 
     </div>
 
+    {{-- Script placed outside x-data scope but accessible --}}
     <script>
-        function togglePlan(id) {
-             fetch(`/dashboard/plans/${id}/toggle`, {
+        async function togglePlan(id) {
+            try {
+                const response = await fetch(`/dashboard/plans/${id}/toggle`, {
                 method: 'POST',
                 headers: { 
                     'X-CSRF-TOKEN': '{{ csrf_token() }}', 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
+                });
+                const data = await response.json();
                 if(data.success) {
-                    // Optional: Show toast notification here
-                    window.location.reload();
+                    window.location.reload(); // Reload to update UI sorting/styles
+                } else {
+                    alert('Không thể cập nhật trạng thái');
                 }
-            })
-            .catch(error => console.error('Error:', error));
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi kết nối server');
+            }
         }
     </script>
 </x-app-layout>

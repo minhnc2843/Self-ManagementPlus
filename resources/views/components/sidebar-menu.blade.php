@@ -7,14 +7,7 @@
         <!-- Application Logo -->
         <x-application-logo />
 
-        <!-- Sidebar Type Button -->
-        <div id="sidebar_type" class="cursor-pointer text-slate-900 dark:text-white text-lg">
-            <iconify-icon class="sidebarDotIcon extend-icon text-slate-900 dark:text-slate-200" icon="fa-regular:dot-circle"></iconify-icon>
-            <iconify-icon class="sidebarDotIcon collapsed-icon text-slate-900 dark:text-slate-200" icon="material-symbols:circle-outline"></iconify-icon>
-        </div>
-        <button class="sidebarCloseIcon text-2xl inline-block md:hidden">
-            <iconify-icon class="text-slate-900 dark:text-slate-200" icon="clarity:window-close-line"></iconify-icon>
-        </button>
+       
     </div>
     <div id="nav_shadow" class="nav_shadow h-[60px] absolute top-[80px] nav-shadow z-[1] w-full transition-all duration-200 pointer-events-none
       opacity-0"></div>
@@ -57,14 +50,6 @@
             </li>
             <!-- Apps Area -->
             <li class="sidebar-menu-title">{{ __('APPS') }}</li>
-            <li>
-                <a href="{{ route('chat') }}" class="navItem {{ (\Request::route()->getName() == 'chat') ? 'active' : '' }}">
-                    <span class="flex items-center">
-                        <iconify-icon class="nav-icon" icon="heroicons-outline:chat"></iconify-icon>
-                        <span>{{ __('Chat') }}</span>
-                    </span>
-                </a>
-            </li>
             
             <li>
                 <a href="{{ route('kanban') }}" class="navItem {{ (\Request::route()->getName() == 'kanban') ? 'active' : '' }}">
@@ -118,133 +103,15 @@
                         <a href="{{ route('utility.blog') }}" class="{{ (\Request::route()->getName() == 'utility.blog') ? 'active' : '' }}">{{ __('Blog') }}</a>
                     </li>
                 
-                    <li>
-                        <a href="{{ route('utility.404') }}" class="{{ (\Request::route()->getName() == 'utility.404') ? 'active' : '' }}">{{ __('404 Pages') }}</a>
-                    </li>
+                   
                     
                    
                 </ul>
             </li>
-            <!-- Elements Area -->
-            <li class="sidebar-menu-title">{{ __('ELEMENTS') }}</li>
-            <!-- Widgets -->
-            <li class="{{ (\Request::route()->getName() == 'widget*') ? 'active' : '' }}">
-                <a href="javascript:void(0)" class="navItem">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:view-grid-add"></iconify-icon>
-                        <span>{{ __('Widgets') }}</span>
-                    </span>
-                    <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
-                </a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('widget.basic') }}" class="{{ (\Request::route()->getName() == 'widget.basic') ? 'active' : '' }}">{{ __('Basic') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('widget.statistic') }}" class="{{ (\Request::route()->getName() == 'widget.statistic') ? 'active' : '' }}">{{ __('Statistics') }}</a>
-                    </li>
-                </ul>
-            </li>
-            <!-- Components -->
-            <li class="{{ (\Request::route()->getName() == 'components*') ? 'active' : '' }}">
-                <a href="javascript:void(0)" class="navItem">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:collection"></iconify-icon>
-                        <span>{{ __('Components') }}</span>
-                    </span>
-                    <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
-                </a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('components.typography') }}" class="{{ (\Request::route()->getName() == 'components.typography') ? 'active' : '' }}">{{ __('Typography') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.colors') }}" class="{{ (\Request::route()->getName() == 'components.colors') ? 'active' : '' }}">{{ __('Colors') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.alert') }}" class="{{ (\Request::route()->getName() == 'components.alert') ? 'active' : '' }}">{{ __('Alert') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.button') }}" class="{{ (\Request::route()->getName() == 'components.button') ? 'active' : '' }}">{{ __('Button') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.card') }}" class="{{ (\Request::route()->getName() == 'components.card') ? 'active' : '' }}">{{ __('Card') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.carousel') }}" class="{{ (\Request::route()->getName() == 'components.carousel') ? 'active' : '' }}">{{ __('Carousel') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.dropdown') }}" class="{{ (\Request::route()->getName() == 'components.dropdown') ? 'active' : '' }}">{{ __('Dropdown') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.image') }}" class="{{ (\Request::route()->getName() == 'components.image') ? 'active' : '' }}">{{ __('Image') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.modal') }}" class="{{ (\Request::route()->getName() == 'components.modal') ? 'active' : '' }}">{{ __('Modal') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.progress-bar') }}" class="{{ (\Request::route()->getName() == 'components.progress-bar') ? 'active' : '' }}">{{ __('Progress bar') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.placeholder') }}" class="{{ (\Request::route()->getName() == 'components.placeholder') ? 'active' : '' }}">{{ __('Placeholder') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.tab') }}" class="{{ (\Request::route()->getName() == 'components.tab') ? 'active' : '' }}">{{ __('Tab & Accordion') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.badges') }}" class="{{ (\Request::route()->getName() == 'components.badges') ? 'active' : '' }}">{{ __('Badges') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.pagination') }}" class="{{ (\Request::route()->getName() == 'components.pagination') ? 'active' : '' }}">Pagination</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('components.video') }}" class="{{ (\Request::route()->getName() == 'components.video') ? 'active' : '' }}">{{ __('Video') }}</a>
-                    </li>
-                    
-                </ul>
-            </li>
-            <!-- Forms -->
-            <li class="{{ (\Request::route()->getName() == 'forms*') ? 'active' : '' }}">
-                <a href="javascript:void(0)" class="navItem">
-                    <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="heroicons-outline:clipboard-list"></iconify-icon>
-                        <span>{{ __('Forms') }}</span>
-                    </span>
-                    <iconify-icon class="icon-arrow" icon="heroicons-outline:chevron-right"></iconify-icon>
-                </a>
-                <ul class="sidebar-submenu">
-                   
-                    <li>
-                        <a href="{{ route('forms.input-group') }}" class="{{ (\Request::route()->getName() == 'forms.input-group') ? 'active' : '' }}">{{ __('Input group') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('forms.input-layout') }}" class="{{ (\Request::route()->getName() == 'forms.input-layout') ? 'active' : '' }}">{{ __('Input layout') }}</a>
-                    </li>
-                    
-                    <li>
-                        <a href="{{ route('forms.input-wizard') }}" class="{{ (\Request::route()->getName() == 'forms.input-wizard') ? 'active' : '' }}">{{ __('Wizard') }}</a>
-                    </li>
-                   
-                    <li>
-                        <a href="{{ route('forms.file-input') }}" class="{{ (\Request::route()->getName() == 'forms.file-input') ? 'active' : '' }}">{{ __('File input') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('forms.repeater') }}" class="{{ (\Request::route()->getName() == 'forms.repeater') ? 'active' : '' }}">{{ __('From repeater') }}</a>
-                    </li>
-                   
-                   
-                   
-                   
-                    <li>
-                        <a href="{{ route('forms.select') }}" class="{{ (\Request::route()->getName() == 'forms.select') ? 'active' : '' }}">{{ __('Select') }}</a>
-                    </li>
-                    
-                </ul>
-            </li>
-            <!-- Tables -->
-            
+         
            
-            <!-- Map -->
+          
+           
             
             <!-- Icons -->
             
