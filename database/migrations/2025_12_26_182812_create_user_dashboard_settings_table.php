@@ -17,8 +17,8 @@ return new class extends Migration
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->string('banner_path')->nullable(); // Đường dẫn ảnh
-        $table->string('banner_title')->default('MỤC TIÊU & KỶ LUẬT'); // Tiêu đề
-        $table->string('banner_quote')->nullable(); // Câu quote phụ (nếu cần)
+        $table->string('banner_title')->default('MỤC TIÊU & KỶ LUẬT'); 
+        $table->string('banner_quote')->nullable(); 
         $table->timestamps();
     });
 }

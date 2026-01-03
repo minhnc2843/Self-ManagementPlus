@@ -47,7 +47,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'guest_background' => [
                 'image',
                 'max:2048',
-                'dimensions:width=580,height=501',
+                // 'dimensions:width=580,height=501',
             ],
         ];
     }
@@ -62,7 +62,7 @@ class UpdateGeneralSettingRequest extends FormRequest
         return [
             // 'favicon.dimensions' => 'The favicon must be 32x32 pixels.',
             // 'guest_logo.dimensions' => 'The guest logo must be 122x32 pixels.',
-            'guest_background.dimensions' => 'The guest background must be 580x501 pixels.',
+            // 'guest_background.dimensions' => 'The guest background must be 580x501 pixels.',
         ];
     }
 }

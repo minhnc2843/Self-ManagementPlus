@@ -183,7 +183,9 @@
                                                 <iconify-icon icon="heroicons:x-mark" class="text-lg"></iconify-icon>
                                             </button>
                                         @endif
-                                        
+                                        <a href="{{ route('events.show', $event->id) }}" class="btn-outline-info btn-sm p-1.5 rounded-full" title="Xem chi tiết">
+                                            <iconify-icon icon="heroicons:eye" class="text-lg"></iconify-icon>
+                                        </a>
                                         <a href="{{ route('events.edit', $event->id) }}" class="btn-outline-secondary btn-sm p-1.5 rounded-full" title="Chỉnh sửa">
                                             <iconify-icon icon="heroicons:pencil-square" class="text-lg"></iconify-icon>
                                         </a>

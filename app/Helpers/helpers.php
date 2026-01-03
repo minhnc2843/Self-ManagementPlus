@@ -4,13 +4,9 @@ use App\Settings\GeneralSettings;
 
 function getSettings($key)
 {
-    try {
-        return app(GeneralSettings::class)->$key ?? null;
-    } catch (\Exception $e) {
-        // Nếu lỗi (do chưa migrate, chưa setup settings), trả về null để không sập web
-        return null; 
-    }
+    return app(GeneralSettings::class)->$key ?? null;
 }
+
 
 function getSelected(): string
 {

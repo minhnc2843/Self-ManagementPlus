@@ -67,9 +67,19 @@ class EventController extends Controller
         return view('dashboards.events.index', compact('pageTitle', 'breadcrumbItems', 'events'));
     }
     
-    /**
-     * Hiển thị form tạo mới sự kiện (events.create)
-     */
+    // show detail
+    public function showDetail($id)
+    {
+        $event = Event::with(['reminders', 'histories'])->findOrFail($id);
+        
+        $pageTitle = 'Chi Tiết Sự Kiện: ' . $event->title;
+        $breadcrumbItems = [
+            ['name' => 'Lịch Hẹn', 'url' => route('events.list'), 'active' => false],
+            ['name' => 'Chi tiết', 'url' => '#', 'active' => true],
+        ];
+
+        return view('dashboards.events.show', compact('pageTitle', 'breadcrumbItems', 'event'));
+    }
     public function create()
     {
         $pageTitle = 'Tạo Sự Kiện Mới';
@@ -263,7 +273,7 @@ class EventController extends Controller
             'Sự kiện mới',                          // $action (Loại)
             $event->title,                          // $title (Tên sự kiện)
             'Bạn đã tạo lịch hẹn'   , // $message
-            route('events.edit', $event->id),       // $url
+            route('events.show', $event->id),       // $url
             'success'                               // $type
         ));
         return redirect()
@@ -432,7 +442,7 @@ class EventController extends Controller
             'Cập nhật sự kiện',                     // $action
             $event->title,                          // $title
             'Thông tin lịch hẹn đã được thay đổi.', // $message
-            route('events.edit', $event->id),       // $url
+            route('events.show', $event->id),       // $url
             'warning'                               // $type
         ));
         return redirect()

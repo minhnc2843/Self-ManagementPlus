@@ -31,6 +31,10 @@ class UpdateProfileRequest extends FormRequest
             'city' => ['nullable', 'string', 'max:255'],
             'country' => ['nullable', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'status' => ['nullable', 'string', 'max:255'], 
+            'profile_description' => ['nullable', 'string', 'max:1000'],
+            'photo' => ['nullable', 'image', 'max:10240'], // Kiểm tra ảnh nếu cần
+            'avatar_base64' => ['nullable', 'string'],
         ];
     }
 }

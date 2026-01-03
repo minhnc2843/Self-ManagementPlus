@@ -37,6 +37,8 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'country',
         'photo',
         'avatar',
+        'status',              // <--- Thêm mới
+         'profile_description'
     ];
 
     /**
