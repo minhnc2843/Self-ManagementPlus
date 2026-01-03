@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('/', [EventController::class, 'store'])->name('events.store');
         Route::get('/{id}/edit', [EventController::class, 'edit'])->name('events.edit');
         Route::put('/{id}', [EventController::class, 'update'])->name('events.update');
+        Route::get('/show/{id}', [EventController::class, 'showDetail'])->name('events.show');// chỉ mới thêm dòng này
         Route::post('/{id}/status', [EventController::class, 'updateStatus'])->name('events.status');
     });
 

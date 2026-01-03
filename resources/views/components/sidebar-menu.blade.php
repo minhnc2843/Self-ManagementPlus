@@ -141,7 +141,8 @@
             <img src="/images/svg/rabit.svg" alt="" class="mx-auto relative -mt-[73px]">
             <div class="mt-6">
                 <button class="bg-white hover:bg-opacity-80 text-slate-900 text-sm font-Inter rounded-md w-full block py-2 font-medium">
-                    Đăng Xuất
+                   <iconify-icon class="text-lg text-textColor dark:text-white mr-2" icon="carbon:logout">
+                        </iconify-icon> Logout
                 </button>
             </div>
         </div>

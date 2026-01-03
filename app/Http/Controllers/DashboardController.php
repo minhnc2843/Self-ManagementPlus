@@ -9,6 +9,7 @@ use App\Models\Goal;
 use App\Models\Plan;
 use App\Models\UserDashboardSetting;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 class DashboardController extends Controller
 {
@@ -57,18 +58,98 @@ class DashboardController extends Controller
         return view('dashboards.banner.edit', compact('settings'));
     }
 
+
+// public function updateBanner(Request $request)
+// {
+//     $request->validate([
+//         'banner_title' => 'required|string|max:255',
+//         // banner_image lúc này có thể là file (nếu upload thường) hoặc string base64 (nếu crop)
+//     ]);
+
+//     try {
+//         $settings = UserDashboardSetting::firstOrCreate(['user_id' => Auth::id()]);
+//         $settings->banner_title = $request->banner_title;
+        
+//         // Cập nhật các thông số khác nếu có
+//         if($request->has('banner_height')) $settings->banner_height = $request->banner_height;
+//         if($request->has('banner_position_y')) $settings->banner_position_y = $request->banner_position_y;
+
+//         // Xử lý ảnh từ CropperJS (Dạng Base64)
+//         if ($request->filled('banner_image_base64')) {
+//             // 1. Xóa ảnh cũ
+//             if ($settings->banner_path && Storage::disk('public')->exists($settings->banner_path)) {
+//                 Storage::disk('public')->delete($settings->banner_path);
+//             }
+
+//             // 2. Tách chuỗi Base64
+//             $image_parts = explode(";base64,", $request->input('banner_image_base64'));
+//             $image_base64 = base64_decode($image_parts[1]);
+
+//             // 3. Tạo tên file và lưu
+//             $fileName = 'banners/' . uniqid() . '.png';
+//             Storage::disk('public')->put($fileName, $image_base64);
+            
+//             $settings->banner_path = $fileName;
+//         } 
+//         // Fallback: Xử lý nếu upload file thường (không qua crop)
+//         elseif ($request->hasFile('banner_image')) {
+//             if ($settings->banner_path && Storage::disk('public')->exists($settings->banner_path)) {
+//                 Storage::disk('public')->delete($settings->banner_path);
+//             }
+//             $path = $request->file('banner_image')->store('banners', 'public');
+//             $settings->banner_path = $path;
+//         }
+
+//         $settings->save();
+        
+//         // Trả về JSON nếu là request AJAX (từ Cropper)
+//         if ($request->ajax()) {
+//             return response()->json(['success' => true, 'message' => 'Cập nhật thành công!']);
+//         }
+
+//         return redirect()->route('dashboard')->with('success', 'Đã cập nhật giao diện!');
+
+//     } catch (\Exception $e) {
+//         if ($request->ajax()) {
+//             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+//         }
+//         return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+//     }
+// }
     public function updateBanner(Request $request)
     {
         $request->validate([
             'banner_title' => 'required|string|max:255',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'banner_quote' => 'nullable|string|max:500',
+            'show_banner_title' => 'boolean',
+            'show_banner_quote' => 'boolean',
         ]);
 
         try {
             $settings = UserDashboardSetting::firstOrCreate(['user_id' => Auth::id()]);
+            
             $settings->banner_title = $request->banner_title;
+            $settings->banner_quote = $request->banner_quote;
+            $settings->show_banner_title = $request->boolean('show_banner_title');
+            $settings->show_banner_quote = $request->boolean('show_banner_quote');
 
-            if ($request->hasFile('banner_image')) {
+            if($request->has('banner_height')) $settings->banner_height = $request->banner_height;
+            if($request->has('banner_position_y')) $settings->banner_position_y = $request->banner_position_y;
+
+            if ($request->filled('banner_image_base64')) {
+                if ($settings->banner_path && Storage::disk('public')->exists($settings->banner_path)) {
+                    Storage::disk('public')->delete($settings->banner_path);
+                }
+
+                $image_parts = explode(";base64,", $request->input('banner_image_base64'));
+                $image_base64 = base64_decode($image_parts[1]);
+
+                $fileName = 'banners/' . uniqid() . '.png';
+                Storage::disk('public')->put($fileName, $image_base64);
+                
+                $settings->banner_path = $fileName;
+            } 
+            elseif ($request->hasFile('banner_image')) {
                 if ($settings->banner_path && Storage::disk('public')->exists($settings->banner_path)) {
                     Storage::disk('public')->delete($settings->banner_path);
                 }
@@ -77,12 +158,22 @@ class DashboardController extends Controller
             }
 
             $settings->save();
+            
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Cập nhật thành công!']);
+            }
+
             return redirect()->route('dashboard')->with('success', 'Đã cập nhật giao diện!');
+
         } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
             return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
 
+    
     public function createGoalPage()
     {
         return view('dashboards.goals.create');

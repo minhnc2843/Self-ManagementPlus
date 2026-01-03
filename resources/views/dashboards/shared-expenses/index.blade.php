@@ -31,7 +31,7 @@
                         @endforeach
                     </div>
                     <a href="{{ route('expense-groups.show', $group->id) }}" class="btn btn-outline-dark btn-sm w-full block text-center">
-                        Xem chi tiết
+                     <iconify-icon icon="heroicons:eye"></iconify-icon>  Detail
                     </a>
                 </div>
             </div>

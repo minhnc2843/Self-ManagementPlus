@@ -6,29 +6,41 @@
     }">
         
         {{-- SECTION 1: BANNER & HEADER --}}
-        <div class="relative rounded-2xl overflow-hidden shadow-xl bg-slate-900 min-h-[280px] flex items-center group">
+        <div class="relative rounded-2xl overflow-hidden shadow-xl bg-slate-900 flex items-center group" 
+             style="min-height: {{ $settings->banner_height ?? 280 }}px; height: {{ $settings->banner_height ?? 280 }}px;">
+            
             {{-- Background Image --}}
-            @if($settings->banner_path)
-                <img src="{{ asset('storage/' . $settings->banner_path) }}" class="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105">
-            @else
-                <img src="{{ asset('images/all-img/widget-bg-2.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105">
-            @endif
+            @php
+                $bgImage = $settings->banner_path ? asset('storage/' . $settings->banner_path) : asset('images/all-img/widget-bg-2.png');
+                $posY = $settings->banner_position_y ?? 50; 
+            @endphp
+            
+            <img src="{{ $bgImage }}" 
+                 class="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+                 style="object-position: 50% {{ $posY }}%">
             
             {{-- Content --}}
             <div class="relative z-10 px-8 md:px-12 w-full flex flex-col md:flex-row justify-between items-end md:items-center">
+                
                 <div class="max-w-2xl">
-                    <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight uppercase drop-shadow-lg mb-2">
-                        {{ $settings->banner_title }}
-                    </h2>
-                    <p class="text-white/90 text-lg font-light italic border-l-4 border-blue-500 pl-4">
-                        "{{ $settings->banner_quote ?? 'Kỷ luật là cầu nối giữa mục tiêu và thành tựu.' }}"
-                    </p>
+                    {{-- Xử lý hiển thị Tiêu đề --}}
+                    @if($settings->show_banner_title ?? true)
+                        <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight uppercase drop-shadow-lg mb-2">
+                            {{ $settings->banner_title }}
+                        </h2>
+                    @endif
+
+                    {{-- Xử lý hiển thị Quote --}}
+                    @if($settings->show_banner_quote ?? true)
+                        <p class="text-white/90 text-lg font-light italic border-l-4 pl-4">
+                            "{{ $settings->banner_quote ?? 'Kỷ luật là cầu nối giữa mục tiêu và thành tựu.' }}"
+                        </p>
+                    @endif
                 </div>
                 
-                {{-- Edit Banner Button --}}
                 <a href="{{ route('dashboard.banner.edit') }}" class="mt-6 md:mt-0 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full border border-white/20 transition-all shadow-lg cursor-pointer relative z-20">
                     <iconify-icon icon="heroicons:pencil-square" class="text-xl"></iconify-icon>
-                    <span class="text-sm font-medium">Cập nhật giao diện</span>
+                    <span class="text-sm font-medium"></span>
                 </a>
             </div>
         </div>
@@ -102,7 +114,7 @@
             <div class="col-span-12 lg:col-span-5 xl:col-span-4">
                 <div class="card h-full bg-white dark:bg-slate-800 shadow-md border-t-4 border-red-500">
                     <div class="card-header p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-red-50 dark:bg-slate-900/50">
-                        <h4 class="text-lg font-bold text-red-600 uppercase"><iconify-icon icon="heroicons:fire" class="mr-1 inline"></iconify-icon> Việc Khẩn Cấp</h4>
+                        <h4 class="text-lg font-bold text-red-600 uppercase"><iconify-icon icon="heroicons:fire"></iconify-icon> Việc Khẩn Cấp</h4>
                         <a href="{{ route('plans.create') }}" class="text-xs font-bold text-red-600 hover:underline">+ Thêm việc</a>
                     </div>
                     <div class="card-body p-0">
@@ -145,7 +157,7 @@
         {{-- SECTION 3: WEEKLY SCHEDULE --}}
         <div class="card bg-white dark:bg-slate-800 shadow-md">
             <div class="card-header p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                <h4 class="font-bold text-slate-700 dark:text-white uppercase"><iconify-icon icon="heroicons:calendar-days" class="mr-2 inline"></iconify-icon> Lịch Trình Tuần Này</h4>
+                <h4 class="font-bold text-slate-700 dark:text-white uppercase"><iconify-icon icon="heroicons:calendar-days"></iconify-icon> Lịch Trình Tuần Này</h4>
                 <a href="{{ route('plans.create') }}" class="btn btn-sm btn-outline-dark">Lên lịch chi tiết</a>
             </div>
             <div class="card-body p-5">

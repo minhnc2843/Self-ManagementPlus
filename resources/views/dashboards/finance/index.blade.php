@@ -80,7 +80,7 @@
                 <div class="card">
                     <header class="card-header noborder">
                         <h4 class="card-title">Giao dịch gần đây</h4>
-                        <a href="{{ route('finance.create') }}" class="btn btn-sm btn-dark">Thêm mới</a>
+                        <a href="{{ route('finance.create') }}" class="btn btn-sm btn-dark"><iconify-icon icon="heroicons:arrow-down-on-square"></iconify-icon> Create</a>
                     </header>
                     <div class="card-body px-6 pb-6">
                         <div class="overflow-x-auto -mx-6">
@@ -149,9 +149,9 @@
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
                                         <div class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                            {{ $loan->contact_name }}
+                                            <iconify-icon icon="heroicons:user"></iconify-icon>{{ $loan->contact_name }}
                                             @if($loan->status == 'paid')
-                                                <span class="badge bg-success-500 text-white text-[10px] px-1 py-0.5 rounded">Đã tất toán</span>
+                                                <span class="badge bg-success-500 text-white text-[10px] px-1 py-0.5 rounded"> Đã tất toán</span>
                                             @else
                                                 <span class="badge bg-warning-500 text-white text-[10px] px-1 py-0.5 rounded">Đang nợ</span>
                                             @endif
@@ -194,7 +194,7 @@
                                 <div class="flex justify-end">
                                     <button onclick="openPaymentModal({{ $loan->id }}, '{{ $loan->contact_name }}', {{ $loan->remaining_amount }})" 
                                             class="btn btn-sm btn-dark py-1 px-3">
-                                        Cập nhật / Tất toán
+                                       <iconify-icon icon="heroicons:shield-check"></iconify-icon> Update / Confirm
                                     </button>
                                 </div>
                                 @endif
