@@ -51,6 +51,12 @@ class DashboardController extends Controller
         return view('dashboards.self-management', compact('settings', 'yearlyGoals', 'topPriorities', 'weeklyPlans'));
     }
 
+    public function editBannerPage()
+    {
+        $settings = UserDashboardSetting::firstOrCreate(['user_id' => Auth::id()]);
+        return view('dashboards.banner.edit', compact('settings'));
+    }
+
     public function updateBanner(Request $request)
     {
         $request->validate([
@@ -58,19 +64,23 @@ class DashboardController extends Controller
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $settings = UserDashboardSetting::where('user_id', Auth::id())->first();
-        $settings->banner_title = $request->banner_title;
+        try {
+            $settings = UserDashboardSetting::firstOrCreate(['user_id' => Auth::id()]);
+            $settings->banner_title = $request->banner_title;
 
-        if ($request->hasFile('banner_image')) {
-            if ($settings->banner_path) {
-                Storage::delete($settings->banner_path);
+            if ($request->hasFile('banner_image')) {
+                if ($settings->banner_path && Storage::disk('public')->exists($settings->banner_path)) {
+                    Storage::disk('public')->delete($settings->banner_path);
+                }
+                $path = $request->file('banner_image')->store('banners', 'public');
+                $settings->banner_path = $path;
             }
-            $path = $request->file('banner_image')->store('banners', 'public');
-            $settings->banner_path = $path;
-        }
 
-        $settings->save();
-        return redirect()->back()->with('success', 'Đã cập nhật giao diện!');
+            $settings->save();
+            return redirect()->route('dashboard')->with('success', 'Đã cập nhật giao diện!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
     }
 
     public function createGoalPage()
@@ -85,15 +95,20 @@ class DashboardController extends Controller
             'progress' => 'integer|min:0|max:100'
         ]);
 
-        Goal::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
-            'color' => $request->color ?? 'primary',
-            'progress' => $request->progress ?? 0,
-            'type' => 'year'
-        ]);
+        try {
+            Goal::create([
+                'user_id' => Auth::id(),
+                'title' => $request->title,
+                'color' => $request->color ?? 'primary',
+                'progress' => $request->progress ?? 0,
+                'type' => 'year',
+                'deadline' => $request->deadline // Thêm deadline nếu có trong form
+            ]);
 
-        return redirect()->route('dashboard')->with('success', 'Thêm mục tiêu thành công');
+            return redirect()->route('dashboard')->with('success', 'Thêm mục tiêu thành công');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function updateGoal(Request $request, $id)
@@ -108,7 +123,7 @@ class DashboardController extends Controller
         $goal->update([
             'title' => $request->title,
             'progress' => $request->progress,
-            'color' => $request->color ?? $goal->color,
+            'color' => $request->filled('color') ? $request->color : $goal->color,
         ]);
 
         return redirect()->back()->with('success', 'Cập nhật mục tiêu thành công');
@@ -134,15 +149,19 @@ class DashboardController extends Controller
             'start_time' => 'required|date',
         ]);
 
-        Plan::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
-            'start_time' => $request->start_time,
-            'is_priority' => $request->has('is_priority'),
-            'status' => 'pending'
-        ]);
+        try {
+            Plan::create([
+                'user_id' => Auth::id(),
+                'title' => $request->title,
+                'start_time' => $request->start_time,
+                'is_priority' => $request->has('is_priority') ? 1 : 0,
+                'status' => 'pending'
+            ]);
 
-        return redirect()->route('dashboard')->with('success', 'Thêm kế hoạch thành công');
+            return redirect()->route('dashboard')->with('success', 'Thêm kế hoạch thành công');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function togglePlanStatus($id)

@@ -27,15 +27,15 @@
             <!-- end horizontal -->
 
             <!-- start horizontal nav -->
-            <x-topbar-menu />
+     
             <!-- end horizontal nav -->
 
             <div class="nav-tools flex items-center lg:space-x-5 space-x-3 rtl:space-x-reverse leading-0">
                 <x-nav-lang-dropdown />
                 <x-dark-light />
-                <x-gray-scale />
+            
                 <x-nav-message-dropdown />
-                <x-nav-notification-dropdown />
+             
                 <x-nav-user-dropdown />
                 <button class="smallDeviceMenuController md:hidden block leading-0">
                     <iconify-icon class="cursor-pointer text-slate-900 dark:text-white text-2xl" icon="heroicons-outline:menu-alt-3"></iconify-icon>
