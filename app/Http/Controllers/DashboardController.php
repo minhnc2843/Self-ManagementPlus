@@ -22,10 +22,11 @@ class DashboardController extends Controller
             ['banner_title' => 'QUẢN TRỊ BẢN THÂN']
         );
 
-        $yearlyGoals = Goal::where('user_id', $user->id)
-            ->where('type', 'year')
-            ->orderBy('progress', 'desc')
-            ->get();
+        $yearlyGoals = Goal::where('user_id', auth()->id())
+        ->orderBy('is_completed') // chưa hoàn thành lên trước
+        ->orderByRaw('ISNULL(deadline), deadline ASC')
+        ->orderByDesc('completed_at')
+        ->paginate(5);
 
         $topPriorities = Plan::where('user_id', $user->id)
             ->where(function($q) {
@@ -49,7 +50,7 @@ class DashboardController extends Controller
                 return Carbon::parse($date->start_time)->format('l');
             });
 
-        return view('dashboards.self-management', compact('settings', 'yearlyGoals', 'topPriorities', 'weeklyPlans'));
+        return view('dashboards.home', compact('settings', 'yearlyGoals', 'topPriorities', 'weeklyPlans'));
     }
 
     public function editBannerPage()
@@ -59,63 +60,7 @@ class DashboardController extends Controller
     }
 
 
-// public function updateBanner(Request $request)
-// {
-//     $request->validate([
-//         'banner_title' => 'required|string|max:255',
-//         // banner_image lúc này có thể là file (nếu upload thường) hoặc string base64 (nếu crop)
-//     ]);
 
-//     try {
-//         $settings = UserDashboardSetting::firstOrCreate(['user_id' => Auth::id()]);
-//         $settings->banner_title = $request->banner_title;
-        
-//         // Cập nhật các thông số khác nếu có
-//         if($request->has('banner_height')) $settings->banner_height = $request->banner_height;
-//         if($request->has('banner_position_y')) $settings->banner_position_y = $request->banner_position_y;
-
-//         // Xử lý ảnh từ CropperJS (Dạng Base64)
-//         if ($request->filled('banner_image_base64')) {
-//             // 1. Xóa ảnh cũ
-//             if ($settings->banner_path && Storage::disk('public')->exists($settings->banner_path)) {
-//                 Storage::disk('public')->delete($settings->banner_path);
-//             }
-
-//             // 2. Tách chuỗi Base64
-//             $image_parts = explode(";base64,", $request->input('banner_image_base64'));
-//             $image_base64 = base64_decode($image_parts[1]);
-
-//             // 3. Tạo tên file và lưu
-//             $fileName = 'banners/' . uniqid() . '.png';
-//             Storage::disk('public')->put($fileName, $image_base64);
-            
-//             $settings->banner_path = $fileName;
-//         } 
-//         // Fallback: Xử lý nếu upload file thường (không qua crop)
-//         elseif ($request->hasFile('banner_image')) {
-//             if ($settings->banner_path && Storage::disk('public')->exists($settings->banner_path)) {
-//                 Storage::disk('public')->delete($settings->banner_path);
-//             }
-//             $path = $request->file('banner_image')->store('banners', 'public');
-//             $settings->banner_path = $path;
-//         }
-
-//         $settings->save();
-        
-//         // Trả về JSON nếu là request AJAX (từ Cropper)
-//         if ($request->ajax()) {
-//             return response()->json(['success' => true, 'message' => 'Cập nhật thành công!']);
-//         }
-
-//         return redirect()->route('dashboard')->with('success', 'Đã cập nhật giao diện!');
-
-//     } catch (\Exception $e) {
-//         if ($request->ajax()) {
-//             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-//         }
-//         return redirect()->back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
-//     }
-// }
     public function updateBanner(Request $request)
     {
         $request->validate([
@@ -202,31 +147,61 @@ class DashboardController extends Controller
         }
     }
 
-    public function updateGoal(Request $request, $id)
+    public function editGoalPage($id)
     {
         $goal = Goal::where('user_id', Auth::id())->findOrFail($id);
+        return view('dashboards.goals.edit', compact('goal'));
+    }
+
+    public function updateGoal(Request $request, $id)
+    {
+        $yearlyGoals = Goal::where('user_id', Auth::id())->findOrFail($id);
         
         $request->validate([
             'title' => 'required|string|max:255',
             'progress' => 'integer|min:0|max:100'
         ]);
 
-        $goal->update([
+        $yearlyGoals->update([
             'title' => $request->title,
             'progress' => $request->progress,
-            'color' => $request->filled('color') ? $request->color : $goal->color,
+            'color' => $request->filled('color') ? $request->color : $yearlyGoals->color,
         ]);
 
-        return redirect()->back()->with('success', 'Cập nhật mục tiêu thành công');
+        return redirect()->route('dashboard')->with('success', 'Cập nhật mục tiêu thành công');
     }
 
-    public function destroyGoal($id)
-    {
-        $goal = Goal::where('user_id', Auth::id())->findOrFail($id);
-        $goal->delete();
+    public function updateProgress(Request $request, $id)
+{
+    $goal = Goal::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
 
-        return redirect()->back()->with('success', 'Đã xóa mục tiêu');
-    }
+    $progress = min(100, max(0, $request->progress));
+
+    $goal->update([
+        'progress' => $progress,
+        'is_completed' => $progress == 100,
+        'completed_at' => $progress == 100 ? now() : null,
+    ]);
+
+    return back()->with('success', 'Cập nhật tiến độ thành công');
+}
+
+public function completeGoal($id)
+{
+    $goal = Goal::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
+
+    $goal->update([
+        'progress' => 100,
+        'is_completed' => true,
+        'completed_at' => now(),
+    ]);
+
+    return back()->with('success', 'Mục tiêu đã hoàn thành 🎉');
+}
 
     public function createPlanPage()
     {

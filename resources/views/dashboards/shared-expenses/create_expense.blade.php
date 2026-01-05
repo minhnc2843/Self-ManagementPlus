@@ -1,150 +1,205 @@
 <x-app-layout>
-    <div class="space-y-8">
+    <div class="space-y-8 max-w-6xl mx-auto px-4 sm:px-6">
+
+        {{-- Page Header --}}
         <div class="flex justify-between items-center">
-            <h4 class="font-medium lg:text-2xl text-xl capitalize text-slate-900 inline-block ltr:pr-4 rtl:pl-4">
+            <h4 class="font-semibold lg:text-2xl text-xl text-slate-900 dark:text-white">
                 Thêm khoản chi: {{ $group->name }}
             </h4>
-            <a href="{{ route('expense-groups.show', $group->id) }}" class="btn btn-outline-dark btn-sm">
+            <a href="{{ route('expense-groups.show', $group->id) }}"
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                      border border-slate-300 dark:border-slate-700
+                      bg-white dark:bg-slate-800
+                      text-slate-700 dark:text-slate-300
+                      hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                <iconify-icon icon="heroicons-outline:arrow-left"></iconify-icon>
                 Quay lại
             </a>
         </div>
 
+        {{-- Error --}}
         @if ($errors->any())
-        <div class="alert alert-danger light-mode">
-            <div class="flex items-center space-x-3 rtl:space-x-reverse">
-                <iconify-icon class="text-2xl" icon="system-uicons:warning-circle"></iconify-icon>
-                <div class="flex-1">
-                    @foreach ($errors->all() as $error)
-                        <div class="text-sm">{{ $error }}</div>
-                    @endforeach
-                </div>
+            <div class="p-4 rounded-xl border border-red-200 bg-red-50 text-red-600">
+                @foreach ($errors->all() as $error)
+                    <div class="text-sm">{{ $error }}</div>
+                @endforeach
             </div>
-        </div>
         @endif
 
-        <div class="card">
-            <div class="card-body p-6">
+        {{-- Card --}}
+        <div class="bg-white dark:bg-slate-800 rounded-2xl
+                    border border-slate-200 dark:border-slate-700
+                    shadow-lg shadow-slate-200/60 dark:shadow-none
+                    overflow-hidden">
+
+            <div class="p-8">
                 <form action="{{ route('expense-groups.add-expense', $group->id) }}" method="POST" id="expenseForm">
                     @csrf
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                        <div class="input-area">
-                            <label class="form-label">Nội dung chi tiêu <span class="text-red-500">*</span></label>
-                            <input type="text" name="title" class="form-control" placeholder="Vd: Ăn hải sản, Tiền taxi..." value="{{ old('title') }}" required>
+
+                    {{-- Basic Info --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                Nội dung chi tiêu <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="title" required
+                                   value="{{ old('title') }}"
+                                   placeholder="Vd: Ăn hải sản, Tiền taxi..."
+                                   class="w-full px-4 py-3 rounded-xl
+                                          bg-white dark:bg-slate-800
+                                          border border-slate-300 dark:border-slate-600
+                                          focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition">
                         </div>
-                        <div class="input-area">
-                            <label class="form-label">Ngày chi <span class="text-red-500">*</span></label>
-                            <input type="date" name="date" class="form-control" value="{{ old('date', date('Y-m-d')) }}" required>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                Ngày chi <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" name="date" required
+                                   value="{{ old('date', date('Y-m-d')) }}"
+                                   class="w-full px-4 py-3 rounded-xl
+                                          bg-white dark:bg-slate-800
+                                          border border-slate-300 dark:border-slate-600
+                                          focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition">
                         </div>
                     </div>
-                    
-                    <div class="input-area mb-8">
-                        <label class="form-label">Tổng số tiền (VNĐ) <span class="text-red-500">*</span></label>
-                        <input type="number" id="total_amount" name="total_amount" class="form-control text-xl font-bold text-green-600" placeholder="0" value="{{ old('total_amount') }}" required>
-                        <span class="text-xs text-slate-500">Nhập tổng số tiền hóa đơn.</span>
-                    </div>
 
-                    <hr class="border-t border-slate-200 dark:border-slate-700 my-6">
-
+                    {{-- Total Amount --}}
                     <div class="mb-8">
-                        <h5 class="text-slate-900 font-medium text-lg mb-3 flex items-center">
-                            <iconify-icon icon="heroicons-outline:currency-dollar" class="mr-2"></iconify-icon> 
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                            Tổng số tiền (VNĐ) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="total_amount" name="total_amount" required
+                               value="{{ old('total_amount') }}"
+                               placeholder="0"
+                               class="w-full px-4 py-4 rounded-xl text-xl font-bold
+                                      bg-white dark:bg-slate-800
+                                      border border-slate-300 dark:border-slate-600
+                                      text-green-600
+                                      focus:border-green-500 focus:ring-4 focus:ring-green-500/20 transition">
+                        <p class="text-xs text-slate-500 mt-1">
+                            Nhập tổng số tiền hóa đơn.
+                        </p>
+                    </div>
+
+                    <hr class="my-8 border-slate-200 dark:border-slate-700">
+
+                    {{-- Payers --}}
+                    <div class="mb-8">
+                        <h5 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                            <iconify-icon icon="heroicons-outline:currency-dollar" class="mr-2"></iconify-icon>
                             Ai thanh toán?
                         </h5>
-                        
-                        <div class="grid grid-cols-1 gap-4">
-                            @foreach($group->members as $member)
-                            <div class="flex items-center p-3 border border-slate-200 rounded-md bg-slate-50 dark:bg-slate-800 dark:border-slate-700 transition-all hover:border-primary-500">
-                                <img src="{{ $member->avatar ?? asset('images/all-img/user.png') }}" class="w-10 h-10 rounded-full mr-3 object-cover">
-                                
-                                <div class="flex-1">
-                                    <div class="text-sm font-medium text-slate-900 dark:text-slate-300">{{ $member->name }}</div>
-                                    <div class="text-xs text-slate-500">{{ $member->email }}</div>
-                                </div>
 
-                                <div class="flex items-center space-x-2">
-                                    <input type="number" 
-                                           name="payers[{{ $member->id }}]" 
-                                           class="form-control py-2 px-2 text-right w-32 payer-input font-medium" 
-                                           id="payer-{{ $member->id }}"
-                                           placeholder="0"
-                                           min="0"
-                                           value="{{ old('payers.'.$member->id, 0) }}">
-                                           
-                                    <button type="button" 
-                                            onclick="setPayAll({{ $member->id }})"
-                                            class="btn btn-sm btn-outline-primary whitespace-nowrap"
-                                            title="Người này trả hết">
-                                        Trả hết
-                                    </button>
+                        <div class="space-y-3">
+                            @foreach($group->members as $member)
+                                <div class="flex items-center gap-4 p-4 rounded-xl
+                                            bg-slate-50 dark:bg-slate-800
+                                            border border-slate-200 dark:border-slate-700">
+                                    <img src="{{ $member->avatar ?? asset('images/all-img/user.png') }}"
+                                         class="w-10 h-10 rounded-full object-cover">
+
+                                    <div class="flex-1">
+                                        <div class="text-sm font-semibold text-slate-800 dark:text-slate-300">
+                                            {{ $member->name }}
+                                        </div>
+                                        <div class="text-xs text-slate-500">
+                                            {{ $member->email }}
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        <input type="number"
+                                               name="payers[{{ $member->id }}]"
+                                               id="payer-{{ $member->id }}"
+                                               value="{{ old('payers.'.$member->id, 0) }}"
+                                               class="payer-input w-28 px-3 py-2 rounded-lg text-right
+                                                      border border-slate-300 dark:border-slate-600
+                                                      bg-white dark:bg-slate-800">
+
+                                        <button type="button"
+                                                onclick="setPayAll({{ $member->id }})"
+                                                class="px-3 py-1.5 rounded-lg text-sm
+                                                       border border-primary-500 text-primary-600
+                                                       hover:bg-primary-50 transition">
+                                            Trả hết
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
                             @endforeach
                         </div>
-                        <div id="payer-warning" class="text-orange-500 text-sm mt-2 hidden">
-                            <iconify-icon icon="heroicons-outline:exclamation"></iconify-icon>
-                            Tổng tiền người trả đang lệch so với hóa đơn!
+
+                        <div id="payer-warning" class="mt-3 hidden"></div>
+                    </div>
+
+                    <hr class="my-8 border-slate-200 dark:border-slate-700">
+
+                    {{-- Share --}}
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h5 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
+                                <iconify-icon icon="heroicons-outline:users" class="mr-2"></iconify-icon>
+                                Chia cho ai?
+                            </h5>
+                            <div class="flex gap-2">
+                                <button type="button" id="selectAllBtn"
+                                        class="px-3 py-1.5 rounded-full text-sm
+                                               border border-primary-500 text-primary-600">
+                                    Chọn tất cả
+                                </button>
+                                <button type="button" id="deselectAllBtn"
+                                        class="px-3 py-1.5 rounded-full text-sm
+                                               border border-danger-500 text-danger-500">
+                                    Bỏ chọn hết
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            @foreach($group->members as $member)
+                                <div class="relative">
+                                    <input type="checkbox"
+                                           name="shares[]"
+                                           value="{{ $member->id }}"
+                                           id="share-user-{{ $member->id }}"
+                                           class="split-checkbox hidden"
+                                           checked>
+
+                                    <label for="share-user-{{ $member->id }}"
+                                           class="share-label-container flex items-center gap-3 p-4
+                                                  rounded-xl border-2 border-slate-200
+                                                  bg-white dark:bg-slate-800 dark:border-slate-700
+                                                  cursor-pointer transition-all duration-200">
+                                        <img src="{{ $member->avatar ?? asset('images/all-img/user.png') }}"
+                                             class="w-10 h-10 rounded-full object-cover">
+
+                                        <div class="flex-1">
+                                            <div class="user-name text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                {{ $member->name }}
+                                            </div>
+                                            <div class="text-xs text-slate-500">Thành viên</div>
+                                        </div>
+
+                                        <div class="check-icon-large w-6 h-6 rounded-full border-2 border-slate-300
+                                                    flex items-center justify-center opacity-50 transition">
+                                            <iconify-icon icon="heroicons-outline:check" class="text-sm"></iconify-icon>
+                                        </div>
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div id="count-selected" class="text-xs text-slate-500 mt-3 text-right">
+                            Đã chọn: {{ $group->members->count() }} người
                         </div>
                     </div>
 
-                    <hr class="border-t border-slate-200 dark:border-slate-700 my-6">
-
-                   <div class="mb-8">
-    <div class="flex justify-between items-center mb-4">
-        <h5 class="text-slate-900 font-medium text-lg flex items-center">
-            <iconify-icon icon="heroicons-outline:users" class="mr-2"></iconify-icon> 
-            Chia cho ai?
-        </h5>
-        <div class="flex gap-2">
-            <button type="button" id="selectAllBtn" class="btn btn-sm btn-outline-primary rounded-full px-3">
-                Chọn tất cả
-            </button>
-            <button type="button" id="deselectAllBtn" class="btn btn-sm btn-outline-danger rounded-full px-3">
-                Bỏ chọn hết
-            </button>
-        </div>
-    </div>
-    
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="share-list-container">
-        @foreach($group->members as $member)
-        <div class="relative share-item-wrapper">
-            <input type="checkbox" 
-                   name="shares[]" 
-                   value="{{ $member->id }}" 
-                   id="share-user-{{ $member->id }}"
-                   class="split-checkbox" 
-                   style="display: none;"
-                   checked>
-
-            <label for="share-user-{{ $member->id }}" 
-                   class="share-label-container flex items-center p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 select-none bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700">
-                
-                <div class="relative mr-3">
-                    <img src="{{ $member->avatar ?? asset('images/all-img/user.png') }}" class="w-10 h-10 rounded-full object-cover">
-                    
-                </div>
-                
-                <div class="flex-1">
-                    <div class="user-name text-sm font-bold text-slate-700 dark:text-slate-300">
-                        {{ $member->name }}
-                    </div>
-                    <div class="text-xs text-slate-500">Thành viên</div>
-                </div>
-
-                <div class="check-icon-large w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center text-white transition-colors opacity-50">
-                    <iconify-icon icon="heroicons-outline:check" class="text-sm"></iconify-icon>
-                </div>
-            </label>
-        </div>
-        @endforeach
-    </div>
-    <div class="text-xs text-slate-500 mt-3 text-right" id="count-selected">
-        Đã chọn: {{ $group->members->count() }} người
-    </div>
-</div>
-
-                    <div class="flex justify-end mt-6 pb-10">
-                        <button type="submit" class="btn btn-primary px-8 py-2 text-lg shadow-lg hover:shadow-xl transition-all">
+                    {{-- Submit --}}
+                    <div class="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-700">
+                        <button type="submit"
+                                class="px-8 py-3 rounded-xl text-lg font-semibold
+                                       bg-primary-600 text-white
+                                       hover:bg-primary-700 hover:shadow-lg hover:shadow-primary-600/30 transition">
                             <iconify-icon icon="heroicons-outline:save" class="mr-2"></iconify-icon>
                             Lưu Khoản Chi
                         </button>
@@ -153,6 +208,8 @@
             </div>
         </div>
     </div>
+
+
 
    <script>
     // ==========================================

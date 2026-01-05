@@ -89,118 +89,140 @@
                 </div>
 
                 {{-- DANH SÁCH SỰ KIỆN (DẠNG GRID/CARD) --}}
-                <div class="grid grid-cols-1 gap-4">
+                <div class="space-y-3">
                     @forelse ($events as $event)
-                        @php
-                            // Xử lý màu sắc Priority để làm Border trái
-                            $priorityColor = match ($event->priority) {
-                                'high' => 'border-danger-500',
-                                'low' => 'border-success-500',
-                                default => 'border-amber-500',
-                            };
-                            
-                            // Xử lý màu Badge trạng thái
-                            $statusClass = match ($event->status) {
-                                'confirmed' => 'bg-success-500 text-white',
-                                'declined' => 'bg-danger-500 text-white',
-                                'attended' => 'bg-info-500 text-white',
-                                'missed' => 'bg-secondary-500 text-white',
-                                default => 'bg-primary-500 text-white',
-                            };
 
-                            // Xử lý icon quan trọng
-                            $isImportant = $event->is_important;
-                        @endphp
+                    @php
+                        $statusColor = match ($event->status) {
+                            'confirmed' => 'bg-emerald-100 text-emerald-700',
+                            'declined'  => 'bg-red-100 text-red-700',
+                            'attended'  => 'bg-sky-100 text-sky-700',
+                            'missed'    => 'bg-slate-200 text-slate-700',
+                            default     => 'bg-indigo-100 text-indigo-700',
+                        };
 
-                        <div class="bg-white dark:bg-slate-800 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-[6px] {{ $priorityColor }} dark:border-slate-700 dark:border-l-[6px]">
-                            <div class="p-4 sm:flex sm:items-center sm:justify-between gap-4">
-                                
-                                {{-- Phần 1: Thời gian (Calendar Icon style) --}}
-                                <div class="flex-none flex sm:flex-col items-center justify-center bg-slate-100 dark:bg-slate-700 rounded-md p-2 min-w-[80px] text-center border border-slate-200 dark:border-slate-600 mr-3 sm:mr-0">
-                                    <span class="text-xs uppercase font-bold text-slate-500 dark:text-slate-400 block">
-                                        {{ $event->start_time ? $event->start_time->format('M') : '--' }}
-                                    </span>
-                                    <span class="text-2xl font-bold text-slate-800 dark:text-white block">
-                                        {{ $event->start_time ? $event->start_time->format('d') : '--' }}
-                                    </span>
-                                    <span class="text-xs text-slate-500 dark:text-slate-400 block">
-                                        {{ $event->start_time ? $event->start_time->format('D') : '' }}
-                                    </span>
-                                </div>
+                        $priorityDot = match ($event->priority) {
+                            'high' => 'bg-red-500',
+                            'low'  => 'bg-emerald-500',
+                            default => 'bg-amber-400',
+                        };
+                    @endphp
 
-                                {{-- Phần 2: Nội dung chính --}}
-                                <div class="flex-1 mt-2 sm:mt-0">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                                            {{ $event->title }}
-                                        </h3>
-                                        @if($isImportant)
-                                            <iconify-icon icon="heroicons:star-solid" class="text-warning-500 text-lg" title="Quan trọng"></iconify-icon>
-                                        @endif
-                                    </div>
+                    <div
+                        class="group flex flex-col sm:flex-row sm:items-center gap-4
+                            rounded-xl border border-slate-200 dark:border-slate-700
+                            bg-white dark:bg-slate-800
+                            px-4 py-3
+                            hover:shadow-md transition">
 
-                                    {{-- Dòng thông tin phụ --}}
-                                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 dark:text-slate-400">
-                                        
-                                        {{-- Thời gian chi tiết --}}
-                                        <div class="flex items-center gap-1">
-                                            <iconify-icon icon="heroicons:clock"></iconify-icon>
-                                            <span>
-                                                {{ $event->start_time ? $event->start_time->format('H:i') : '--' }} 
-                                                - 
-                                                {{ $event->end_time ? $event->end_time->format('H:i') : '--' }}
-                                            </span>
-                                        </div>
+                        {{-- 🗓 Date --}}
+                        <div class="min-w-[160px]">
+                            <p class="text-sm font-semibold text-slate-800 dark:text-white">
+                                {{ $event->start_time?->translatedFormat('l') ?? '—' }}
+                            </p>
+                            <p class="text-lg font-bold text-slate-900 dark:text-white">
+                                {{ $event->start_time?->format('d/m/Y') ?? '--/--/----' }}
+                            </p>
+                            <p class="text-xs text-slate-500">
+                                {{ $event->start_time?->format('H:i') ?? '--:--' }}
+                                –
+                                {{ $event->end_time?->format('H:i') ?? '--:--' }}
+                            </p>
+                        </div>
 
-                                        {{-- Loại --}}
-                                        <div class="flex items-center gap-1">
-                                            <iconify-icon icon="heroicons:tag"></iconify-icon>
-                                            <span class="capitalize">{{ $event->event_type ?? 'Chung' }}</span>
-                                        </div>
+                        {{-- 📄 Content --}}
+                        <div class="flex-1 space-y-1">
 
-                                        {{-- Ưu tiên (Hiển thị text nếu cần) --}}
-                                        <div class="flex items-center gap-1">
-                                            <iconify-icon icon="heroicons:flag"></iconify-icon>
-                                            <span class="capitalize {{ $event->priority == 'high' ? 'text-danger-500' : '' }}">{{ $event->priority }}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full {{ $priorityDot }}"></span>
 
-                                {{-- Phần 3: Trạng thái & Hành động --}}
-                                <div class="flex-none mt-3 sm:mt-0 flex sm:flex-col items-end gap-2 justify-between sm:justify-center w-full sm:w-auto">
-                                    {{-- Badge Trạng thái --}}
-                                    <span class="badge {{ $statusClass }} rounded-full px-3 py-1 text-xs font-medium capitalize">
-                                        {{ $event->status }}
-                                    </span>
+                                <h3 class="font-medium text-slate-900 dark:text-white">
+                                    {{ $event->title }}
+                                </h3>
 
-                                    {{-- Actions Buttons --}}
-                                    <div class="flex items-center gap-2 mt-2">
-                                        @if($event->status == 'upcoming' || $event->status == 'pending')
-                                            <button data-id="{{ $event->id }}" data-status="confirmed" class="status-change-btn btn-outline-success btn-sm p-1.5 rounded-full" title="Xác nhận">
-                                                <iconify-icon icon="heroicons:check" class="text-lg"></iconify-icon>
-                                            </button>
-                                            <button data-id="{{ $event->id }}" data-status="declined" class="status-change-btn btn-outline-danger btn-sm p-1.5 rounded-full" title="Từ chối">
-                                                <iconify-icon icon="heroicons:x-mark" class="text-lg"></iconify-icon>
-                                            </button>
-                                        @endif
-                                        <a href="{{ route('events.show', $event->id) }}" class="btn-outline-info btn-sm p-1.5 rounded-full" title="Xem chi tiết">
-                                            <iconify-icon icon="heroicons:eye" class="text-lg"></iconify-icon>
-                                        </a>
-                                        <a href="{{ route('events.edit', $event->id) }}" class="btn-outline-secondary btn-sm p-1.5 rounded-full" title="Chỉnh sửa">
-                                            <iconify-icon icon="heroicons:pencil-square" class="text-lg"></iconify-icon>
-                                        </a>
-                                    </div>
-                                </div>
+                                @if($event->is_important)
+                                    <iconify-icon
+                                        icon="heroicons:star-solid"
+                                        class="text-amber-400 text-sm"
+                                        title="Quan trọng"/>
+                                @endif
+                            </div>
 
+                            <div class="text-sm text-slate-500 dark:text-slate-400 flex flex-wrap gap-x-4">
+                                <span>{{ $event->event_type ?? 'Chung' }}</span>
+                                <span class="capitalize">Priority: {{ $event->priority }}</span>
                             </div>
                         </div>
+
+                        {{-- 🎯 Status + Actions --}}
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
+
+                                                {{-- Status --}}
+                                                <span class="px-3 py-1 rounded-full text-xs font-medium {{ $statusColor }}">
+                                                    {{ ucfirst($event->status) }}
+                                                </span>
+
+                                                {{-- Actions (ALWAYS VISIBLE) --}}
+                                                <div class="flex items-center gap-1">
+
+                                                    @if(in_array($event->status, ['upcoming','pending']))
+                                                        <button
+                                                            data-id="{{ $event->id }}"
+                                                            data-status="confirmed"
+                                                            class="status-change-btn
+                                                                w-9 h-9 rounded-full
+                                                                flex items-center justify-center
+                                                                bg-emerald-50 text-emerald-600
+                                                                hover:bg-emerald-100"
+                                                            title="Xác nhận">
+                                                            <iconify-icon icon="heroicons:check-circle"/>
+                                                        </button>
+
+                                                        <button
+                                                            data-id="{{ $event->id }}"
+                                                            data-status="declined"
+                                                            class="status-change-btn
+                                                                w-9 h-9 rounded-full
+                                                                flex items-center justify-center
+                                                                bg-red-50 text-red-600
+                                                                hover:bg-red-100"
+                                                            title="Từ chối">
+                                                            <iconify-icon icon="heroicons:x-circle"/>
+                                                        </button>
+                                                    @endif
+
+                                                    <a
+                                                        href="{{ route('events.show', $event->id) }}"
+                                                        class="w-9 h-9 rounded-full
+                                                            flex items-center justify-center
+                                                            bg-sky-50 text-sky-600
+                                                            hover:bg-sky-100"
+                                                        title="Xem chi tiết">
+                                                        <iconify-icon icon="heroicons:eye"/>
+                                                    </a>
+
+                                                    <a
+                                                        href="{{ route('events.edit', $event->id) }}"
+                                                        class="w-9 h-9 rounded-full
+                                                            flex items-center justify-center
+                                                            bg-slate-100 text-slate-600
+                                                            hover:bg-slate-200"
+                                                        title="Chỉnh sửa">
+                                                        <iconify-icon icon="heroicons:pencil-square"/>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                    </div>
+
                     @empty
-                        <div class="text-center py-10 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-dashed border-slate-300">
-                            <iconify-icon icon="heroicons:calendar-days" class="text-5xl text-slate-400 mb-2"></iconify-icon>
-                            <p class="text-slate-500">Không tìm thấy sự kiện nào phù hợp.</p>
-                        </div>
+                    <div class="text-center py-12 text-slate-500">
+                        <iconify-icon icon="heroicons:calendar-days" class="text-5xl mb-2 opacity-50"/>
+                        <p>Không có sự kiện nào</p>
+                    </div>
                     @endforelse
-                </div>
+                    </div>
+
 
                 {{-- Phân trang --}}
                 <div class="mt-6">
@@ -297,7 +319,8 @@
                             backgroundColor: color,
                             borderColor: color,
                             textColor: '#ffffff',
-                            url: '{{ url("events") }}/' + eventData.id + '/edit'
+                            url: '{{ url("events/show") }}/' + eventData.id
+                            // url: '{{ url("events") }}/' + eventData.id + '/edit'
                         };
                     }
                 });

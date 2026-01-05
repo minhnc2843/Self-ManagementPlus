@@ -9,7 +9,8 @@ class Goal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'title', 'type', 'progress', 'color', 'icon', 'deadline'
+        'user_id', 'title', 'type', 'progress', 'color', 'icon', 'deadline' ,'is_completed',
+    'completed_at'
     ];
 
     public function user()

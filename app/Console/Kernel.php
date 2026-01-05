@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Console;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,6 +17,9 @@ class Kernel extends ConsoleKernel
 {    $schedule->command('notify:upcoming-events')->everyFiveMinutes();
      $schedule->command('events:update-missed')->everyMinute();
       $schedule->command('events:send-reminders')->everyMinute();
+         $schedule->call(function () {
+            DB::table('notifications')->where('created_at', '<', now()->subDays(30))->delete();
+        })->daily();
 }
 
     /**

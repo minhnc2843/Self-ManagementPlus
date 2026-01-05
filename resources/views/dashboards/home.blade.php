@@ -48,73 +48,14 @@
         {{-- SECTION 2: GOALS & PRIORITIES --}}
         <div class="grid grid-cols-12 gap-6">
             
-            {{-- LEFT: YEARLY GOALS --}}
-            <div class="col-span-12 lg:col-span-7 xl:col-span-8">
-                <div class="card h-full bg-white dark:bg-slate-800 shadow-md border border-slate-200 dark:border-slate-700">
-                    <div class="card-header p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                        <div>
-                            <h4 class="text-lg font-bold text-slate-800 dark:text-white uppercase tracking-wider">🎯 Mục Tiêu Năm Nay</h4>
-                            <p class="text-xs text-slate-500 mt-1">Theo dõi tiến độ các mục tiêu lớn của bạn</p>
-                        </div>
-                        <a href="{{ route('goals.create') }}" class="btn btn-sm bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-500/30">
-                            <iconify-icon icon="heroicons:plus" class="mr-1"></iconify-icon> Thêm mới
-                        </a>
-                    </div>
-                    
-                    <div class="card-body p-5 space-y-5">
-                        @forelse($yearlyGoals as $goal)
-                            <div class="group bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-blue-200 transition-all">
-                                <div class="flex justify-between items-start mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div class="h-10 w-10 rounded-full bg-{{ $goal->color }}-100 text-{{ $goal->color }}-600 flex items-center justify-center">
-                                            <iconify-icon icon="heroicons:trophy" class="text-xl"></iconify-icon>
-                                        </div>
-                                        <div>
-                                            <h5 class="font-bold text-slate-700 dark:text-slate-200">{{ $goal->title }}</h5>
-                                            <span class="text-xs text-slate-500">Deadline: {{ $goal->deadline ? \Carbon\Carbon::parse($goal->deadline)->format('d/m/Y') : 'Không thời hạn' }}</span>
-                                        </div>
-                                    </div>
-                                    
-                                    {{-- Actions --}}
-                                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button type="button" @click='currentGoal = @json($goal); editGoalModal = true' class="p-2 rounded-full hover:bg-slate-200 text-slate-500 transition">
-                                            <iconify-icon icon="heroicons:pencil"></iconify-icon>
-                                        </button>
-                                        <form action="{{ route('goals.destroy', $goal->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa mục tiêu này?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="p-2 rounded-full hover:bg-red-100 text-red-500 transition">
-                                                <iconify-icon icon="heroicons:trash"></iconify-icon>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                {{-- Progress Bar --}}
-                                <div class="relative pt-2">
-                                    <div class="flex justify-between text-xs font-semibold mb-1 text-slate-500">
-                                        <span>Tiến độ</span>
-                                        <span class="text-{{ $goal->color }}-600">{{ $goal->progress }}%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                                        <div class="bg-{{ $goal->color }}-500 h-2.5 rounded-full transition-all duration-1000" style="width: {{ $goal->progress }}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="text-center py-10">
-                                <img src="{{ asset('images/svg/empty.svg') }}" class="h-32 mx-auto opacity-50 mb-4" alt="Empty">
-                                <p class="text-slate-500">Chưa có mục tiêu nào. Hãy đặt mục tiêu ngay!</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
+            {{--import LEFT: YEARLY GOALS --}}
+            @include('dashboards.goals.index')
 
             {{-- RIGHT: URGENT TASKS --}}
             <div class="col-span-12 lg:col-span-5 xl:col-span-4">
                 <div class="card h-full bg-white dark:bg-slate-800 shadow-md border-t-4 border-red-500">
                     <div class="card-header p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-red-50 dark:bg-slate-900/50">
-                        <h4 class="text-lg font-bold text-red-600 uppercase"><iconify-icon icon="heroicons:fire"></iconify-icon> Việc Khẩn Cấp</h4>
+                        <h4 class="text-lg font-bold text-red-600 uppercase"><iconify-icon icon="heroicons:fire"></iconify-icon>Mục tiêu ngắn hạn</h4>
                         <a href="{{ route('plans.create') }}" class="text-xs font-bold text-red-600 hover:underline">+ Thêm việc</a>
                     </div>
                     <div class="card-body p-0">
@@ -237,29 +178,4 @@
         </div>
 
     </div>
-
-    {{-- Script placed outside x-data scope but accessible --}}
-    <script>
-        async function togglePlan(id) {
-            try {
-                const response = await fetch(`/dashboard/plans/${id}/toggle`, {
-                method: 'POST',
-                headers: { 
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}', 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-                });
-                const data = await response.json();
-                if(data.success) {
-                    window.location.reload(); // Reload to update UI sorting/styles
-                } else {
-                    alert('Không thể cập nhật trạng thái');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi kết nối server');
-            }
-        }
-    </script>
 </x-app-layout>
