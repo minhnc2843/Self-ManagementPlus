@@ -95,8 +95,8 @@
 
                             {{-- Footer Buttons --}}
                             <div class="flex items-center justify-end space-x-3 pt-4">
-                                <a href="{{ route('finance.index') }}" class="btn btn-outline-secondary btn-sm">
-                                    Hủy bỏ
+                                <a href="{{ route('finance.index') }}" class="btn btn-outline-secondary btn-sm text-slate-600">
+                                     <iconify-icon icon="heroicons:arrow-down-left"></iconify-icon>  Hủy bỏ
                                 </a>
                                 <button type="submit" class="btn btn-dark btn-sm px-6 py-2 shadow-lg">
                                     <span class="flex items-center">

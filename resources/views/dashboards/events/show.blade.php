@@ -1,3 +1,4 @@
+ 
 <x-app-layout>
     <div class="space-y-8">
 
@@ -23,7 +24,7 @@
 
                         @if($event->description)
                             <p class="mt-1 text-sm text-slate-500">
-                                {{ $event->description }}
+                              <iconify-icon icon="heroicons:window" class="mr-2"></iconify-icon>  {{ $event->description }}
                             </p>
                         @endif
                     </div>

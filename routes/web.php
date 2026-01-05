@@ -29,9 +29,15 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/dashboard/update-banner', [DashboardController::class, 'updateBanner'])->name('dashboard.update-banner'); //chưa có
 
     Route::get('/dashboard/goals/create', [DashboardController::class, 'createGoalPage'])->name('goals.create');
-    Route::post('/dashboard/goals', [DashboardController::class, 'storeGoal'])->name('goals.store');//chưa có
-    Route::put('/dashboard/goals/{id}', [DashboardController::class, 'updateGoal'])->name('goals.update');// chưa có
-    Route::delete('/dashboard/goals/{id}', [DashboardController::class, 'destroyGoal'])->name('goals.destroy');// chưa có
+    Route::post('/dashboard/goals', [DashboardController::class, 'storeGoal'])->name('goals.store');
+    Route::get('/dashboard/goals/{id}/edit', [DashboardController::class, 'editGoalPage'])->name('goals.edit');
+    Route::put('/dashboard/goals/{id}', [DashboardController::class, 'updateGoal'])->name('goals.update');
+    Route::patch('/dashboard/goals/{id}/progress', [DashboardController::class, 'updateProgress'])
+    ->name('goals.progress');
+    Route::patch('/dashboard/goals/{id}/complete', [DashboardController::class, 'completeGoal'])
+        ->name('goals.complete');
+        Route::patch('/dashboard/goals/{id}/progress', [DashboardController::class, 'updateProgress'])
+    ->name('goals.progress');
 
     Route::get('/dashboard/plans/create', [DashboardController::class, 'createPlanPage'])->name('plans.create');
     Route::post('/dashboard/plans', [DashboardController::class, 'storePlan'])->name('plans.store');// chưa có
