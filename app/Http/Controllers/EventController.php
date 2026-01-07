@@ -509,7 +509,7 @@ class EventController extends Controller
                 'Xác nhận lịch hẹn thành công',                     // $action
                 $event->title,                          // $title
                 'Thông tin lịch hẹn đã được confirm.', // $message
-                route('events.edit', $event->id),       // $url
+                route('events.show', $event->id),       // $url
                 'warning'                               // $type
             ));
             return response()->json(['message' => 'Status updated successfully'], 200);

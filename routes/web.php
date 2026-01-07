@@ -16,6 +16,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SharedExpenseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\DigitalAssetController;
 require __DIR__ . '/auth.php';
 
 Route::get('/', function () {
@@ -70,8 +72,26 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
    
     
-
+    Route::get('/file-manager', [FileManagerController::class, 'index'])->name('file-manager.index');
+    Route::post('/file-manager/folder', [FileManagerController::class, 'createFolder'])->name('file-manager.create-folder');
+    Route::post('/file-manager/upload', [FileManagerController::class, 'upload'])->name('file-manager.upload');
+    Route::delete('/file-manager/delete', [FileManagerController::class, 'delete'])->name('file-manager.delete');
+    Route::delete('/file-manager/bulk-delete', [FileManagerController::class, 'bulkDelete'])->name('file-manager.bulk-delete');
+    Route::post('/file-manager/rename', [FileManagerController::class, 'rename'])->name('file-manager.rename');
+    Route::get('/file-manager/download/{id}', [FileManagerController::class, 'download'])->name('file-manager.download');
+    Route::get('/file-manager/content/{id}', [FileManagerController::class, 'getContent'])->name('file-manager.get-content');
+    Route::post('/file-manager/save-content/{id}', [FileManagerController::class, 'saveContent'])->name('file-manager.save-content');
     // Locale
+
+    Route::get('/storage/links', [DigitalAssetController::class, 'indexLinks'])->name('assets.links');
+    Route::post('/storage/links', [DigitalAssetController::class, 'storeLink'])->name('assets.links.store');
+    Route::put('/storage/links/{id}', [DigitalAssetController::class, 'updateLink'])->name('assets.links.update');
+    Route::delete('/storage/links/{id}', [DigitalAssetController::class, 'destroyLink'])->name('assets.links.destroy');
+
+    Route::get('/storage/clipboard', [DigitalAssetController::class, 'indexClipboard'])->name('assets.clipboard');
+    Route::post('/storage/clipboard', [DigitalAssetController::class, 'storeClipboard'])->name('assets.clipboard.store');
+    Route::put('/storage/clipboard/{id}', [DigitalAssetController::class, 'updateClipboard'])->name('assets.clipboard.update');
+    Route::delete('/storage/clipboard/{id}', [DigitalAssetController::class, 'destroyClipboard'])->name('assets.clipboard.destroy');
     Route::get('setlocale/{locale}', SetLocaleController::class)->name('setlocale');
 
     // User

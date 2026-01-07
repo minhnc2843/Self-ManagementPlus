@@ -38,7 +38,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
         'photo',
         'avatar',
         'status',              // <--- Thêm mới
-         'profile_description'
+         'profile_description',
     ];
 
     /**
@@ -68,7 +68,18 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
             ->fit(Manipulations::FIT_CROP, 300, 300)
             ->nonQueued();
     }
-
+    public function folders()
+    {
+        return $this->hasMany(Folder::class);
+    }
+    public function link()
+    {
+        return $this->hasMany(Link::class);
+    }
+    public function clipboard()
+    {
+        return $this->hasMany(Clipboard::class);
+    }
     /**
      * Local scope to exclude auth user
      * @param $query
@@ -88,6 +99,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     {
         return $query->where('id', '!=', 1);
     }
-
+    
 
 }

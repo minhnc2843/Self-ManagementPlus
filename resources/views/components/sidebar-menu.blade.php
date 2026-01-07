@@ -113,14 +113,42 @@
           
            
             
-            <!-- Icons -->
-            
-            <!-- Database -->
+            <!-- file/folder manager -->
+             <li>
+                <a href="{{ route('file-manager.index') }}"
+                   class="navItem {{ (request()->is('file-manager*')) ? 'active' : '' }}">
+                    <span class="flex items-center">
+                       <iconify-icon class="nav-icon" icon="heroicons:wallet"></iconify-icon>
+                        <span>{{ __('File Manager') }}</span>
+                    </span>
+                </a>
+            </li>
+            <!-- Assets Links -->
+             <li>
+                <a href="{{ route('assets.links') }}"
+                   class="navItem {{ (request()->routeIs('assets.links*')) ? 'active' : '' }}">
+                    <span class="flex items-center">
+                       <iconify-icon class="nav-icon" icon="heroicons:link"></iconify-icon>
+                        <span>{{ __('Assets Links') }}</span>
+                    </span>
+                </a>
+            </li>
+            <!-- Assets Clipboard -->
+             <li>
+                <a href="{{ route('assets.clipboard') }}"
+                   class="navItem {{ (request()->routeIs('assets.clipboard*')) ? 'active' : '' }}">
+                    <span class="flex items-center">
+                        <iconify-icon class="nav-icon" icon="heroicons:window"></iconify-icon>
+                        <span>{{ __('Assets Clipboard') }}</span>
+                    </span>
+                </a>
+            </li>
+            <!-- Database Backup -->
             <li>
                 <a href="{{ route('database-backups.index') }}"
                    class="navItem {{ (request()->is('database-backups*')) ? 'active' : '' }}">
                     <span class="flex items-center">
-                        <iconify-icon class=" nav-icon" icon="iconoir:database-backup"></iconify-icon>
+                        <iconify-icon class="nav-icon" icon="iconoir:database-backup"></iconify-icon>
                         <span>{{ __('Database Backup') }}</span>
                     </span>
                 </a>

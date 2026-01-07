@@ -183,6 +183,7 @@
                                     <x-input-error :messages="$errors->get('photo')" class="mt-2" />
                                 </div>
                             </div>
+                           
                             <div class="flex justify-end">
                                 <button type="submit" class="btn btn-dark mt-3">{{ __('Save Changes') }}</button>
                             </div>
