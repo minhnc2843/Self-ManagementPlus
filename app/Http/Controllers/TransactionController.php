@@ -39,20 +39,24 @@ class TransactionController extends Controller
             });
         }
 
-        // 3. Tính toán tổng quan Dashboard
-        $allTransactions = Transaction::where('user_id', $userId)->get();
-        $totalIncome = $allTransactions->where('type', 'income')->sum('amount');
-        $totalExpense = $allTransactions->where('type', 'expense')->sum('amount');
+        // 3. Tính toán tổng quan Dashboard (Đã tối ưu bằng SQL Aggregation để tránh Memory Limit)
+        $sums = Transaction::where('user_id', $userId)
+            ->selectRaw("SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income")
+            ->selectRaw("SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense")
+            ->first();
+
+        $totalIncome = $sums->income ?? 0;
+        $totalExpense = $sums->expense ?? 0;
         $currentBalance = $totalIncome - $totalExpense;
 
-        // 4. Lấy dữ liệu biểu đồ (QUAN TRỌNG: Hàm này phải trả về mảng có key 'income', 'expense', 'labels')
+        // 4. Lấy dữ liệu biểu đồ (Đã tối ưu thành 1 truy vấn duy nhất)
         $chartData = $this->getChartData($userId, $period);
 
         // 5. Phân trang
         $transactions = $transactionQuery->orderBy('transaction_date', 'desc')->paginate(10, ['*'], 'trans_page');
         
         // Sắp xếp khoản vay: Chưa trả lên trước -> Ngày đến hạn gần nhất
-        $loans = $loanQuery->orderBy('status', 'desc') // 'pending' (p) < 'paid' (p) -> pending lên trước nếu status là string text, nhưng thường nên check cụ thể. Ở đây mặc định string alphabet.
+        $loans = $loanQuery->orderBy('status', 'desc')
                            ->orderBy('due_date', 'asc')
                            ->paginate(10, ['*'], 'loan_page');
 
@@ -68,7 +72,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Hàm xử lý dữ liệu biểu đồ (Đã bổ sung đầy đủ)
+     * Hàm xử lý dữ liệu biểu đồ tối ưu hóa (Chỉ chạy duy nhất 1 câu SQL gom nhóm)
      */
     protected function getChartData($userId, $period)
     {
@@ -78,55 +82,74 @@ class TransactionController extends Controller
 
         if ($period == 'week') {
             $start = Carbon::now()->startOfWeek();
+            $end = Carbon::now()->endOfWeek();
+
+            // Truy vấn duy nhất cho cả tuần
+            $results = Transaction::where('user_id', $userId)
+                ->whereBetween('transaction_date', [$start->format('Y-m-d'), $end->format('Y-m-d')])
+                ->selectRaw("DATE_FORMAT(transaction_date, '%Y-%m-%d') as date, type, SUM(amount) as total")
+                ->groupBy('date', 'type')
+                ->get();
+
+            $dataMap = [];
+            foreach ($results as $row) {
+                $dataMap[$row->date][$row->type] = (float)$row->total;
+            }
+
             // Lặp 7 ngày trong tuần
             for ($i = 0; $i < 7; $i++) {
-                $date = $start->copy()->addDays($i);
-                $labels[] = $date->format('d/m'); // Label: 20/12
+                $dateObj = $start->copy()->addDays($i);
+                $dateStr = $dateObj->format('Y-m-d');
+                $labels[] = $dateObj->format('d/m'); // Label: 20/12
                 
-                $income = Transaction::where('user_id', $userId)
-                            ->where('type', 'income')
-                            ->whereDate('transaction_date', $date)->sum('amount');
-                $expense = Transaction::where('user_id', $userId)
-                            ->where('type', 'expense')
-                            ->whereDate('transaction_date', $date)->sum('amount');
-                
-                $incomeData[] = $income;
-                $expenseData[] = $expense;
+                $incomeData[] = $dataMap[$dateStr]['income'] ?? 0;
+                $expenseData[] = $dataMap[$dateStr]['expense'] ?? 0;
             }
 
         } elseif ($period == 'year') {
+            $year = Carbon::now()->year;
+
+            // Truy vấn duy nhất cho cả năm
+            $results = Transaction::where('user_id', $userId)
+                ->whereYear('transaction_date', $year)
+                ->selectRaw("MONTH(transaction_date) as month, type, SUM(amount) as total")
+                ->groupBy('month', 'type')
+                ->get();
+
+            $dataMap = [];
+            foreach ($results as $row) {
+                $dataMap[(int)$row->month][$row->type] = (float)$row->total;
+            }
+
             // Lặp 12 tháng
             for ($i = 1; $i <= 12; $i++) {
                 $labels[] = "T$i"; // Label: T1, T2...
-                
-                $income = Transaction::where('user_id', $userId)
-                            ->where('type', 'income')
-                            ->whereYear('transaction_date', Carbon::now()->year)
-                            ->whereMonth('transaction_date', $i)->sum('amount');
-                $expense = Transaction::where('user_id', $userId)
-                            ->where('type', 'expense')
-                            ->whereYear('transaction_date', Carbon::now()->year)
-                            ->whereMonth('transaction_date', $i)->sum('amount');
-                            
-                $incomeData[] = $income;
-                $expenseData[] = $expense;
+                $incomeData[] = $dataMap[$i]['income'] ?? 0;
+                $expenseData[] = $dataMap[$i]['expense'] ?? 0;
             }
         } else { 
             // Mặc định là 'month': Lặp qua số ngày của tháng hiện tại
+            $start = Carbon::now()->startOfMonth();
+            $end = Carbon::now()->endOfMonth();
+
+            // Truy vấn duy nhất cho cả tháng
+            $results = Transaction::where('user_id', $userId)
+                ->whereBetween('transaction_date', [$start->format('Y-m-d'), $end->format('Y-m-d')])
+                ->selectRaw("DAY(transaction_date) as day, type, SUM(amount) as total")
+                ->groupBy('day', 'type')
+                ->get();
+
+            $dataMap = [];
+            foreach ($results as $row) {
+                $dataMap[(int)$row->day][$row->type] = (float)$row->total;
+            }
+
             $daysInMonth = Carbon::now()->daysInMonth;
             for ($i = 1; $i <= $daysInMonth; $i++) {
                 $labels[] = str_pad($i, 2, '0', STR_PAD_LEFT); // Label: 01, 02...
-                $date = Carbon::createFromDate(null, null, $i)->format('Y-m-d');
-                 
-                $income = Transaction::where('user_id', $userId)
-                            ->where('type', 'income')
-                            ->whereDate('transaction_date', $date)->sum('amount');
-                $expense = Transaction::where('user_id', $userId)
-                            ->where('type', 'expense')
-                            ->whereDate('transaction_date', $date)->sum('amount');
-                            
-                $incomeData[] = $income;
-                $expenseData[] = $expense;
+                
+                $incomeData[] = $dataMap[$i]['income'] ?? 0;
+                $expenseData[] = $dataMap[$i]['expense'] ?? 0;
             }
         }
 
