@@ -17,7 +17,7 @@
                 </button>
               </div>
             </div>
-            <div class="flex space-x-6 overflow-hidden overflow-x-auto pb-4 rtl:space-x-reverse">
+            <div class="flex space-x-6 overflow-hidden overflow-x-auto pb-4 rtl:space-x-reverse dragula-container">
               <div class="w-[320px] flex-none min-h-screen h-full rounded transition-all duration-100 shadow-none bg-slate-200 dark:bg-slate-700">
                 <div class="relative flex justify-between items-center bg-white dark:bg-slate-800 rounded shadow-base px-6 py-5">
                   <span class="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-[2px] bg-primary-500">

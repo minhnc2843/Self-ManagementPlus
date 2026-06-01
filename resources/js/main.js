@@ -1,53 +1,82 @@
+import jQuery from "jquery";
+
 (function($) {
-    $.sidebarMenu = function(menu) {
-        var animationSpeed = 300,
-            subMenuSelector = '.sidebar-submenu';
+    "use strict";
 
-        $(menu).on('click', 'li a', function(e) {
-            var $this = $(this);
-            var checkElement = $this.next();
+    // 1. LOGIC SIDEBAR MENU (Sử dụng Event Delegation để tương thích Livewire SPA)
+    // Bắt sự kiện click trên document thay vì element cụ thể
+    $(document).on('click', '.sidebar-menu li a', function(e) {
+        var $this = $(this);
+        var checkElement = $this.next();
+        var animationSpeed = 300;
+        var subMenuSelector = '.sidebar-submenu';
 
-            if (checkElement.is(subMenuSelector) && checkElement.is(':visible')) {
-                checkElement.slideUp(animationSpeed, function() {
-                    checkElement.removeClass('menu-open');
-                });
-                checkElement.parent("li").removeClass("active");
-            }
+        // Nếu click vào item có submenu
+        if (checkElement.is(subMenuSelector) && checkElement.is(':visible')) {
+            checkElement.slideUp(animationSpeed, function() {
+                checkElement.removeClass('menu-open');
+            });
+            checkElement.parent("li").removeClass("active");
+        }
+        else if ((checkElement.is(subMenuSelector)) && (!checkElement.is(':visible'))) {
+            var parent = $this.parents('ul').first();
+            var ul = parent.find('ul:visible').slideUp(animationSpeed);
+            ul.removeClass('menu-open');
+            var parent_li = $this.parent("li");
 
-            //If the menu is not visible
-            else if ((checkElement.is(subMenuSelector)) && (!checkElement.is(':visible'))) {
-                //Get the parent menu
-                var parent = $this.parents('ul').first();
-                //Close all open menus within the parent
-                var ul = parent.find('ul:visible').slideUp(animationSpeed);
-                //Remove the menu-open class from the parent
-                ul.removeClass('menu-open');
-                //Get the parent li
-                var parent_li = $this.parent("li");
+            checkElement.slideDown(animationSpeed, function() {
+                checkElement.addClass('menu-open');
+                parent.find('li.active').removeClass('active');
+                parent_li.addClass('active');
+            });
+        }
 
-                //Open the target menu and add the menu-open class
-                checkElement.slideDown(animationSpeed, function() {
-                    //Add the class active to the parent li
-                    checkElement.addClass('menu-open');
-                    parent.find('li.active').removeClass('active');
-                    parent_li.addClass('active');
-                });
-            }
-            //if this isn't a link, prevent the page from being redirected
-            if (checkElement.is(subMenuSelector)) {
-                e.preventDefault();
-            }
+        // Ngăn chặn link mặc định nếu là submenu toggle (javascript:void(0))
+        if (checkElement.is(subMenuSelector)) {
+            e.preventDefault();
+        }
+    });
+
+    // 2. Hàm khởi tạo trạng thái (Active menu, SimpleBar...)
+    function initApp() {
+        var currentPageUrl = window.location.href;
+        
+        // Reset active cũ
+        $(".sidebar-menu li").removeClass("active");
+        $(".sidebar-menu li a").removeClass("active");
+        $(".sidebar-submenu").removeClass("menu-open").hide();
+
+        // Tìm link active chính xác
+        var $currentLink = $('.sidebar-menu a').filter(function() {
+            return this.href === currentPageUrl;
         });
-    }
 
-    var currentPageUrl = window.location.href;
-    let currentLink = currentPageUrl.split("/");
-    let Href = currentLink[currentLink.length - 1];
-    $('a[href="' + Href + '"]').addClass("active");
-    let ParentUl = $("a.active").parent().parent();
-    $(ParentUl).addClass("menu-open");
-    let ParentClass = $("a.active").parent().parent().parent();
-    $(ParentClass).addClass("active");
+        // Fallback: Nếu không tìm thấy chính xác, thử tìm theo segment cuối (bỏ query string)
+        if ($currentLink.length === 0) {
+            let currentLinkParts = currentPageUrl.split("/");
+            let lastPart = currentLinkParts[currentLinkParts.length - 1].split("?")[0];
+            if(lastPart) {
+                $currentLink = $('.sidebar-menu a[href*="' + lastPart + '"]').first();
+            }
+        }
+
+        // Active item và mở menu cha
+        if ($currentLink.length > 0) {
+            $currentLink.addClass("active");
+            $currentLink.parents('.sidebar-submenu').addClass('menu-open').show();
+            $currentLink.parents('li').addClass('active');
+        }
+        
+        // Re-init SimpleBar
+        if($("#sidebar_menus").length > 0) {
+             new SimpleBar($("#sidebar_menus")[0]);
+        }
+        if($("#scrollModal").length > 0) {
+             new SimpleBar($("#scrollModal")[0]);
+        }
+        
+        screenWidth();
+    }
 
     function screenWidth() {
         if ($(window).width() < 1281) {
@@ -325,13 +354,13 @@
     /* =============================
       Small Device Buttons function
       ===============================*/
-    $(".smallDeviceMenuController").on("click", function() {
+    $(document).on("click", ".smallDeviceMenuController", function() {
         $(".sidebar-wrapper").addClass("sidebar-open");
         $("#bodyOverlay").removeClass("hidden");
         $("body").addClass("overflow-hidden");
     });
 
-    $(".sidebarCloseIcon, #bodyOverlay").on("click", function() {
+    $(document).on("click", ".sidebarCloseIcon, #bodyOverlay", function() {
         $(".sidebar-wrapper").removeClass("sidebar-open");
         $("#bodyOverlay").addClass("hidden");
         $("body").removeClass("overflow-hidden");
@@ -389,9 +418,17 @@
     /*===================================
        Plugin initialization
       =====================================*/
-    // Sidebar Menu
-    $.sidebarMenu($(".sidebar-menu"));
+    
+    // Chạy lần đầu
+    initApp();
 
-    // Simple Bar
-    new SimpleBar($("#sidebar_menus, #scrollModal")[0]);
+    // Chạy lại khi Livewire điều hướng (SPA)
+    document.addEventListener('livewire:navigated', () => {
+        initApp();
+        // Reset trạng thái overlay nếu đang mở trên mobile
+        $(".sidebar-wrapper").removeClass("sidebar-open");
+        $("#bodyOverlay").addClass("hidden");
+        $("body").removeClass("overflow-hidden");
+    });
+
 })(jQuery);

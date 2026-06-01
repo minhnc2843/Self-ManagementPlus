@@ -298,6 +298,8 @@
 
     {{-- SCRIPTS: Modal & Chart (Updated) --}}
     @push('scripts')
+    {{-- Chỉ tải file này khi vào trang Finance --}}
+    {{-- Lưu ý: Trong file finance.js cần dùng sự kiện livewire:navigated thay vì DOMContentLoaded --}}
     @vite(['resources/js/custom/finance.js'])
     @endpush
 </x-app-layout>

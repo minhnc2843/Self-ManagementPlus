@@ -15,7 +15,7 @@
         <ul class="sidebar-menu">
             <li class="sidebar-menu-title">{{ __('MENU') }}</li>
             <li class="{{ (\Request::route()->getName() == 'dashboards*') ? 'active' : '' }}">
-                <a href="#" class="navItem">
+               <a href="javascript:void(0)" class="navItem">
                     <span class="flex items-center">
                         <iconify-icon class=" nav-icon" icon="heroicons-outline:home"></iconify-icon>
                         <span>{{ __('Dashboard') }}</span>
@@ -24,24 +24,24 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li>
-                        <a href="{{ route('dashboard') }}" class="navItem {{ (\Request::route()->getName() == 'dashboard') ? 'active' : '' }}">{{ __('Home') }}</a>
+                       <a  wire:navigate href="{{ route('dashboard') }}" class="navItem {{ (\Request::route()->getName() == 'dashboard') ? 'active' : '' }}">{{ __('Home') }}</a>
                     </li>
                     <li>
-                        <a href="{{ route('notifications.index') }}" class="navItem {{ (\Request::route()->getName() == 'notifications.index') ? 'active' : '' }}">{{ __('Notifications') }}</a>
+                       <a  wire:navigate href="{{ route('notifications.index') }}" class="navItem {{ (\Request::route()->getName() == 'notifications.index') ? 'active' : '' }}">{{ __('Notifications') }}</a>
                     </li>
                     <li>
-                        <a href="{{ route('finance.index') }}" class="navItem {{ (\Request::route()->getName() == 'finance.index') ? 'active' : '' }}">{{ __('Finance') }}
+                       <a  wire:navigate href="{{ route('finance.index') }}" class="navItem {{ (\Request::route()->getName() == 'finance.index') ? 'active' : '' }}">{{ __('Finance') }}
                         </a>
                     </li>
 
                      <li>
-                        <a href="{{ route('events.list') }}"
+                       <a  wire:navigate href="{{ route('events.list') }}"
                         class="navItem {{ (\Request::route()->getName() == 'events.list') ? 'active' : '' }}">
                             {{ __('Events') }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('expense-groups.index') }}"
+                       <a  wire:navigate href="{{ route('expense-groups.index') }}"
                         class="navItem {{ (\Request::route()->getName() == 'expense-groups.index') ? 'active' : '' }}">
                             {{ __('Expenses') }}
                         </a>
@@ -52,7 +52,7 @@
             <li class="sidebar-menu-title">{{ __('APPS') }}</li>
             
             <li>
-                <a href="{{ route('kanban') }}" class="navItem {{ (\Request::route()->getName() == 'kanban') ? 'active' : '' }}">
+               <a  wire:navigate href="{{ route('kanban') }}" class="navItem {{ (\Request::route()->getName() == 'kanban') ? 'active' : '' }}">
                     <span class="flex items-center">
                         <iconify-icon class=" nav-icon" icon="heroicons-outline:view-boards"></iconify-icon>
                         <span>{{ __('Kanban') }}</span>
@@ -61,7 +61,7 @@
             </li>
          
             <li>
-                <a href="{{ route('todo') }}" class="navItem {{ (\Request::route()->getName() == 'todo') ? 'active' : '' }}">
+               <a  wire:navigate href="{{ route('todo') }}" class="navItem {{ (\Request::route()->getName() == 'todo') ? 'active' : '' }}">
                     <span class="flex items-center">
                         <iconify-icon class=" nav-icon" icon="heroicons-outline:clipboard-check"></iconify-icon>
                         <span>{{ __('Todo') }}</span>
@@ -69,7 +69,7 @@
                 </a>
             </li>
             <li class="{{ (\Request::route()->getName() == 'project*') ? 'active' : '' }}">
-                <a href="javascript:void(0)" class="navItem">
+               <a href="javascript:void(0)" class="navItem">
                     <span class="flex items-center">
                         <iconify-icon class=" nav-icon" icon="heroicons-outline:document"></iconify-icon>
                         <span>{{ __('Projects') }}</span>
@@ -78,10 +78,10 @@
                 </a>
                 <ul class="sidebar-submenu">
                     <li>
-                        <a href="{{ route('project') }}" class="{{ (\Request::route()->getName() == 'project') ? 'active' : '' }}">{{ __('Projects') }}</a>
+                       <a  wire:navigate href="{{ route('project') }}" class="{{ (\Request::route()->getName() == 'project') ? 'active' : '' }}">{{ __('Projects') }}</a>
                     </li>
                     <li>
-                        <a href="{{ route('project-details') }}" class="{{ (\Request::route()->getName() == 'projectDetails') ? 'active' : '' }}">{{ __('Project Details') }}</a>
+                       <a  wire:navigate href="{{ route('project-details') }}" class="{{ (\Request::route()->getName() == 'projectDetails') ? 'active' : '' }}">{{ __('Project Details') }}</a>
                     </li>
                 </ul>
             </li>
@@ -89,7 +89,7 @@
             <li class="sidebar-menu-title">{{ __('PAGES') }}</li>
             <!-- Utility -->
             <li class="{{ (\Request::route()->getName() == 'utility*') ? 'active' : '' }}">
-                <a href="javascript:void(0)" class="navItem">
+               <a href="javascript:void(0)" class="navItem">
                     <span class="flex items-center">
                         <iconify-icon class=" nav-icon" icon="heroicons-outline:view-boards"></iconify-icon>
                         <span>{{ __('Utility') }}</span>
@@ -100,7 +100,7 @@
                    
             
                     <li>
-                        <a href="{{ route('utility.blog') }}" class="{{ (\Request::route()->getName() == 'utility.blog') ? 'active' : '' }}">{{ __('Blog') }}</a>
+                       <a  wire:navigate href="{{ route('utility.blog') }}" class="{{ (\Request::route()->getName() == 'utility.blog') ? 'active' : '' }}">{{ __('Blog') }}</a>
                     </li>
                 
                    
@@ -115,7 +115,7 @@
             
             <!-- file/folder manager -->
              <li>
-                <a href="{{ route('file-manager.index') }}"
+               <a  wire:navigate href="{{ route('file-manager.index') }}"
                    class="navItem {{ (request()->is('file-manager*')) ? 'active' : '' }}">
                     <span class="flex items-center">
                        <iconify-icon class="nav-icon" icon="heroicons:wallet"></iconify-icon>
@@ -125,7 +125,7 @@
             </li>
             <!-- Assets Links -->
              <li>
-                <a href="{{ route('assets.links') }}"
+               <a  wire:navigate href="{{ route('assets.links') }}"
                    class="navItem {{ (request()->routeIs('assets.links*')) ? 'active' : '' }}">
                     <span class="flex items-center">
                        <iconify-icon class="nav-icon" icon="heroicons:link"></iconify-icon>
@@ -135,7 +135,7 @@
             </li>
             <!-- Assets Clipboard -->
              <li>
-                <a href="{{ route('assets.clipboard') }}"
+               <a  wire:navigate href="{{ route('assets.clipboard') }}"
                    class="navItem {{ (request()->routeIs('assets.clipboard*')) ? 'active' : '' }}">
                     <span class="flex items-center">
                         <iconify-icon class="nav-icon" icon="heroicons:window"></iconify-icon>
@@ -145,7 +145,7 @@
             </li>
             <!-- Database Backup -->
             <li>
-                <a href="{{ route('database-backups.index') }}"
+               <a  wire:navigate href="{{ route('database-backups.index') }}"
                    class="navItem {{ (request()->is('database-backups*')) ? 'active' : '' }}">
                     <span class="flex items-center">
                         <iconify-icon class="nav-icon" icon="iconoir:database-backup"></iconify-icon>
@@ -155,7 +155,7 @@
             </li>
             <!-- Settings -->
             <li>
-                <a href="{{ route('general-settings.show') }}"
+               <a  wire:navigate href="{{ route('general-settings.show') }}"
                    class="navItem {{ (request()->is('general-settings*')) || (request()->is('users*')) || (request()->is('roles*')) || (request()->is('profiles*')) || (request()->is('permissions*')) ? 'active' : '' }}">
                     <span class="flex items-center">
                         <iconify-icon class=" nav-icon" icon="material-symbols:settings-outline"></iconify-icon>

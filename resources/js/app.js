@@ -12,6 +12,9 @@ import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import cleave from 'cleave.js';
 import validate from "jquery-validation";
+import dragula from "dragula/dist/dragula";
+import "dragula/dist/dragula.css";
+import "./main";
 
 window.$ = jQuery;
 window.jQuery = jQuery;
@@ -21,6 +24,7 @@ window.Swal = Swal;
 window.tippy = tippy;
 window.cleave = cleave;
 window.validate = validate;
+window.dragula = dragula;
 
 // Dynamic Import cho FullCalendar
 if (document.querySelector('.calendar-element') || document.querySelector('#calendar')) {
@@ -55,13 +59,8 @@ if (document.querySelector('#map') || document.querySelector('.map-container')) 
     });
 }
 
-// Dynamic Import cho Dragula
-if (document.querySelector('.dragula-container')) {
-    import('dragula/dist/dragula').then((dragula) => {
-        import('dragula/dist/dragula.css');
-        window.dragula = dragula.default;
-    });
-}
+// Dragula đã được chuyển thành Static Import ở trên để tương thích với Livewire wire:navigate
+
 
 // Dynamic Import cho DataTable
 if (document.querySelector('.data-table')) {

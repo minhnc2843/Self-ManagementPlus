@@ -13,6 +13,7 @@
         "laravel/socialite": "^5.5",
         "laravel/tinker": "^2.7",
         "laravolt/avatar": "^4.1",
+        "livewire/livewire": "^2.12",
         "protonemedia/laravel-verify-new-email": "^1.6",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-backup": "^8.1",
